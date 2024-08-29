@@ -1,5 +1,4 @@
 import { SessionAdapter, StrategyCore, TokenManager, TokenManagerParams, UserAdapter } from "@tytan-auth/common";
-export { default as jwt } from "./jwt";
 // type MergeObjects<T extends object[]> = {
 //     [K in keyof T[number]]: T[number][K];
 // };
@@ -58,8 +57,6 @@ const Auth = <
     } & { [K in Strategy['name']]: Strategy['endpoints'] };
 }
 export default Auth;
-// export { default as local } from './strategy/local.strategy'
-export { default as oauth } from './strategy/oauth.strategy'
 
 
 export type TytanAuthParams<
