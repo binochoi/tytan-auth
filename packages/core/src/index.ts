@@ -56,7 +56,7 @@ const Auth = <
     };
 }
 export default Auth;
-export { default as local } from './strategy/local.strategy'
+// export { default as local } from './strategy/local.strategy'
 export { default as oauth } from './strategy/oauth.strategy'
 
 
