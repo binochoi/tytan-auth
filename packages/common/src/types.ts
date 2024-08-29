@@ -21,8 +21,9 @@ export type Strategy<
 export type StrategyCore<
     TEndpoints extends object = any,
     THelperTypes extends object = any,
+    TName extends string = string,
 > = (context: StrategyContext) => {
-    name: string,
+    name: TName,
     endpoints: TEndpoints,
     types: THelperTypes,
 }

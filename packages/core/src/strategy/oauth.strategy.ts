@@ -23,7 +23,7 @@ const strategy = <TProviderKey extends string>({
         [K in TProviderKey]: ProviderInfo
     },
     redirectUrl: string,
-}): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>> => ({
+}): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
     token: tokenManager,
     adapters: {
         user: userAdapter,
