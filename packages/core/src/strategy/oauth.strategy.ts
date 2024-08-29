@@ -1,5 +1,25 @@
-import { OauthEndpoints, StrategyCore } from "@tytan-auth/common";
+import { StrategyCore } from "@tytan-auth/common";
 import { type OAuth2Provider, OAuth2ProviderWithPKCE, generateCodeVerifier } from 'arctic';
+
+interface Tokens {
+    accessToken: string;
+    refreshToken?: string | null;
+    accessTokenExpiresAt?: Date;
+    refreshTokenExpiresAt?: Date | null;
+    idToken?: string;
+}
+interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
+    'createAuthorizationURL': (
+        provider: TProviderKey,
+        state?: {
+            [K: string]: any,
+            user?: {
+                name: string;
+            }
+        }
+    ) => Promise<URL>,
+    'validateAuthorizationCodeAndGenerateSession': (code: string, state: string) => Promise<{ tokens: Tokens, session: TSession }>,
+};
 /**
  * 
  */
