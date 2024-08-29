@@ -33,12 +33,11 @@ class TytanAuth {
     }
 }
 const Auth = <
-    TOptions extends TytanAuthConfig<TEndpoints, THelperTypes, TUser, TSession>,
     TEndpoints extends object,
     THelperTypes extends object,
     TUser extends object,
     TSession extends object,
->({ token, strategies, adapters }: TytanAuthConfig<TEndpoints, THelperTypes, TUser, TSession>) => {
+>({ token, strategies, adapters }: TytanAuthParams<TEndpoints, THelperTypes, TUser, TSession>) => {
     const { adapters: { user, session }, endpoints, types } = new TytanAuth(
         token,
         strategies,
@@ -51,8 +50,8 @@ const Auth = <
         types,
     } as {
         endpoints: TEndpoints,
-        user: TOptions['adapters']['user'],
-        session: TOptions['adapters']['session'],
+        user: UserAdapter<TUser>,
+        session: SessionAdapter<TSession>,
         types: THelperTypes
     };
 }
@@ -61,7 +60,7 @@ export default Auth;
 export { default as oauth } from './strategy/oauth.strategy'
 
 
-export type TytanAuthConfig<
+export type TytanAuthParams<
     TEndpoints extends object,
     THelperTypes extends object,
     TUser extends object,
