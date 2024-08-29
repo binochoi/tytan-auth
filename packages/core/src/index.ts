@@ -33,6 +33,7 @@ class TytanAuth {
     }
 }
 const Auth = <
+    TOptions extends TytanAuthConfig<TEndpoints, THelperTypes, TUser, TSession>,
     TEndpoints extends object,
     THelperTypes extends object,
     TUser extends object,
@@ -50,8 +51,8 @@ const Auth = <
         types,
     } as {
         endpoints: TEndpoints,
-        user: UserAdapter<TUser>,
-        session: SessionAdapter<TSession, any>,
+        user: TOptions['adapters']['user'],
+        session: TOptions['adapters']['session'],
         types: THelperTypes
     };
 }
