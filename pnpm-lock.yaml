@@ -33,8 +33,11 @@ importers:
   packages/core:
     dependencies:
       '@tytan-auth/common':
-        specifier: workspace:../common
+        specifier: workspace:*
         version: link:../common
+      '@tytan-auth/provider':
+        specifier: workspace:*
+        version: link:../provider
       arctic:
         specifier: ^1.9.2
         version: 1.9.2
@@ -65,7 +68,7 @@ importers:
         version: link:../common
       drizzle-orm:
         specifier: ^0.31.2
-        version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)
+        version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)
       oslo:
         specifier: ^1.2.1
         version: 1.2.1
@@ -122,15 +125,43 @@ importers:
       '@tytan-auth/drizzle-adapter':
         specifier: workspace:*
         version: link:../drizzle-adapter
+      '@tytan-auth/provider':
+        specifier: workspace:*
+        version: link:../provider
       arctic:
         specifier: ^1.9.2
         version: 1.9.2
       drizzle-orm:
         specifier: 0.31.2
-        version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)
+        version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)
       pg:
         specifier: ^8.12.0
         version: 8.12.0
+      pkgroll:
+        specifier: ^2.4.2
+        version: 2.4.2(typescript@5.5.4)
+      typescript:
+        specifier: ^5.5.4
+        version: 5.5.4
+    devDependencies:
+      '@binochoi/eslint-config-typescript':
+        specifier: ^0.0.25
+        version: 0.0.25(@typescript-eslint/parser@6.21.0(eslint@9.9.0)(typescript@5.5.4))(eslint@9.9.0)(typescript@5.5.4)
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^7.7.0
+        version: 7.18.0(@typescript-eslint/parser@6.21.0(eslint@9.9.0)(typescript@5.5.4))(eslint@9.9.0)(typescript@5.5.4)
+      '@typescript-eslint/parser':
+        specifier: ^6.21.0
+        version: 6.21.0(eslint@9.9.0)(typescript@5.5.4)
+      eslint:
+        specifier: ^9.0.0
+        version: 9.9.0
+
+  packages/provider:
+    dependencies:
+      arctic:
+        specifier: ^1.9.2
+        version: 1.9.2
       pkgroll:
         specifier: ^2.4.2
         version: 2.4.2(typescript@5.5.4)
@@ -1458,6 +1489,9 @@ packages:
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
+  js-tokens@4.0.0:
+    resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -1488,6 +1522,10 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  loose-envify@1.4.0:
+    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
@@ -1720,6 +1758,10 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
+    engines: {node: '>=0.10.0'}
 
   regexp.prototype.flags@1.5.2:
     resolution: {integrity: sha512-NcDiDkTLuPR+++OCKB0nWafEmhg/Da8aUPLPMQbK+bxKKCm1/S5he+AqYa4PlMCVBalb4/yxIRub6qkEx5yJbw==}
@@ -2716,10 +2758,11 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  drizzle-orm@0.31.2(@types/pg@8.11.6)(pg@8.12.0):
+  drizzle-orm@0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1):
     optionalDependencies:
       '@types/pg': 8.11.6
       pg: 8.12.0
+      react: 18.3.1
 
   eastasianwidth@0.2.0: {}
 
@@ -3203,6 +3246,9 @@ snapshots:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
 
+  js-tokens@4.0.0:
+    optional: true
+
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
@@ -3231,6 +3277,11 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.merge@4.6.2: {}
+
+  loose-envify@1.4.0:
+    dependencies:
+      js-tokens: 4.0.0
+    optional: true
 
   lru-cache@10.4.3: {}
 
@@ -3456,6 +3507,11 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  react@18.3.1:
+    dependencies:
+      loose-envify: 1.4.0
+    optional: true
 
   regexp.prototype.flags@1.5.2:
     dependencies:

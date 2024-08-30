@@ -14,8 +14,8 @@ const strategy: Strategy<any, LocalEndpoints> = (options) => ({
         name: 'local' as const,
         endpoints: {
             'signin': async (form) => {
-                const user = await userAdapter.validateLocal(form);
-                const { id, ...accessToken } = user;
+                // const user = await userAdapter.validateLocal(form);
+                // const { id, ...accessToken } = user;
                 return sessionAdapter.insertOne as any;
             },
             'signup': async () => {

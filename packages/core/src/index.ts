@@ -1,7 +1,4 @@
 import { SessionAdapter, StrategyCore, TokenManager, TokenManagerParams, UserAdapter } from "@tytan-auth/common";
-// type MergeObjects<T extends object[]> = {
-//     [K in keyof T[number]]: T[number][K];
-// };
 
 class TytanAuth {
     readonly endpoints: { [K: string]: any };
@@ -22,7 +19,6 @@ class TytanAuth {
                 ...current.types,
             },
             endpoints: {
-                // [prev.name]: prev.endpoints,
                 ...prev.endpoints,
                 ...current.endpoints,
             }
@@ -54,7 +50,7 @@ const Auth = <
         user: UserAdapter<TUser>,
         session: SessionAdapter<TSession>,
         types: THelperTypes
-    } & { [K in Strategy['name']]: Strategy['endpoints'] };
+    };
 }
 export default Auth;
 
