@@ -1,15 +1,23 @@
-import { TokenManager, TokenManagerParams, SessionTokens } from '@tytan-auth/common';
-class JwtManager<T extends object> implements TokenManager<T> {
+import { TokenManagerParams, SessionTokens, TokenAdapter } from '@tytan-auth/common';
+import * as jwt from 'jsonwebtoken';
+class JwtAdapter<T extends object> implements TokenAdapter<T> {
+    private readonly secret: string;
     constructor({
         secret,
-        accessTokenExpires = 1000 * 60 * 2,
-        refreshTokenExpires = 1000 * 60 * 60 * 24 * 30
     }: TokenManagerParams) {
-        
+        this.secret = secret;
     }
-    issue: (data: T) => SessionTokens;
-    validate(token: string): T {
-        throw new Error('Method not implemented.');
+    async generate(payload: T, expiresIn: number): Promise<string> {
+        return jwt.sign(payload, this.secret, { expiresIn });
+    }
+    async verify(token: string): Promise<T> {
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, this.secret, (err, decoded) => {
+                if(err) {
+                    reject(err);
+                } else resolve(decoded as T);
+            });
+        })
     }
 }
-export default <T extends object>(params: TokenManagerParams) => new JwtManager<T>(params);
+export default <T extends object>(params: TokenManagerParams) => new JwtAdapter<T>(params);

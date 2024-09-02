@@ -3,6 +3,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "moduleDetection": "force",
+    "moduleResolution": "Bundler",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

@@ -61,7 +61,7 @@ const strategy = <TProviderKey extends string, TSession extends object>({
         validateAuthorizationCodeAndGenerateSession: async ({ code, state, codeVerifier = '' }) => {
             const { provider: providerName, user } = JSON.parse(state) as OAuthState<TProviderKey>;
             const provider = providerDict[providerName];
-            const newTokens = tokenManager.issue(user);
+            const newTokens = await tokenManager.issue(user);
             const {
                 refreshToken,
                 refreshTokenExpiresAt = newTokens.refreshTokenExpiresAt

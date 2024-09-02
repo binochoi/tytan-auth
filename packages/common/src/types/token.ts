@@ -1,24 +1,12 @@
 import { SessionTokens } from "./adapter";
 
 
-export interface TokenManagerParams {
-    secret: string,
-    /**
-     *  miliseconds
-     *  @default 2min
-     * */
-    accessTokenExpires?: number,
-    /** 
-     * miliseconds
-     * @description
-     * it'll be replaced when only oauth session creation.
-     * so therefore if longer than oauth refresh token expires,
-     * will replaced to that.
-     * @default 1month
-     * */
-    refreshTokenExpires?: number,
+export type TokenManagerParams = { secret: string }
+export interface TokenManager {
+    issue: (data: any) => Promise<SessionTokens>,
+    validate: (accessToken: string) => Promise<any>
 }
-export interface TokenManager<Info extends object = any> {
-    issue: (data: Info) => SessionTokens,
-    validate: (token: string) =>  Info
+export interface TokenAdapter<T extends object> {
+    generate(payload: T, expiresAt: number): Promise<string>,
+    verify(token: string): Promise<T>,
 }

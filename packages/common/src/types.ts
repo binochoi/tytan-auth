@@ -1,18 +1,24 @@
+import { SetRequired } from 'type-fest';
 import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
-import { TokenManager } from './types/token';
-export type TytanAuthConfig<
-    TEndpoints extends object = any,
-    THelperTypes extends object = any
-> = {
-    setting?: {},
-    token: TokenManager,
-    strategies: StrategyCore<TEndpoints, THelperTypes>[],
-    adapters: {
-        user: UserAdapter,
-        session: SessionAdapter,
-    },
-    plugins: any[],
-}
+import { TokenManager, TokenManagerParams } from './types/token';
+export type TytanAuthConfigInput = {
+    
+    /**
+     *  miliseconds
+     *  @default 2min
+     * */
+    accessTokenExpires?: number,
+    /** 
+     * miliseconds
+     * @description
+     * it'll be replaced when only oauth session creation.
+     * so therefore if longer than oauth refresh token expires,
+     * will replaced to that.
+     * @default 1month
+     * */
+    refreshTokenExpires?: number,
+};
+export type TytanAuthConfigOutput = SetRequired<TytanAuthConfigInput, 'accessTokenExpires' | 'refreshTokenExpires'>
 export type TytanSetting = {}
 export type Strategy<
     TOption extends object = any,
