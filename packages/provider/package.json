@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/provider",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -47,6 +47,7 @@
   "keywords": [],
   "dependencies": {
     "arctic": "^1.9.2",
+    "next-auth": "^4.24.7",
     "pkgroll": "^2.4.2",
     "typescript": "^5.5.4"
   }

@@ -1,4 +1,22 @@
-import { Google } from 'arctic';
+// import { Google } from 'arctic';
 import arctic from "src/adapters/arctic";
 import { ProviderGeneratorParams } from 'src/types';
-export default (params: ProviderGeneratorParams) => arctic('google', Google, params);
+import { GoogleProfile } from 'next-auth/providers/google';
+import { Google } from "arctic";
+
+export default (params: ProviderGeneratorParams) => arctic<'google', GoogleProfile>(
+    'google',
+    Google,
+    params,
+    {
+        profileFetchUri: 'https://openidconnect.googleapis.com/v1/userinfo',
+        extractRawProfile(profile){
+            return {
+                id: profile.sub,
+                name: profile.name,
+                email: profile.email,
+                image: profile.picture,
+            }
+        }
+    },
+);

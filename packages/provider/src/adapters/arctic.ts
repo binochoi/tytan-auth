@@ -11,6 +11,7 @@ const arcticAdapter: ProviderGenerator = (
     name,
     Provider,
     { clientId, clientSecret, scopes },
+    { profileFetchUri, extractRawProfile },
 ) => ({ redirectUri }) => {
     const provider = new Provider(clientId, clientSecret, redirectUri) as unknown as OAuth2Provider | OAuth2ProviderWithPKCE;
     const createAuthorizationURL = async <T extends object = any>(state: T, codeVerifier = '') => {
@@ -24,10 +25,23 @@ const arcticAdapter: ProviderGenerator = (
         }
         return url;
     }
+    const getProfile = async (accessToken: string) => {
+        const res = await fetch(profileFetchUri, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        const raw: any = await res.json();
+        return {
+            ...extractRawProfile(raw),
+            raw,
+        }
+    }
     return {
         name,
         ...provider,
         createAuthorizationURL,
+        getProfile,
     }
 };
 export default arcticAdapter;

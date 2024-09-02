@@ -6,11 +6,12 @@ export interface Tokens {
     refreshTokenExpiresAt?: Date | null;
     idToken?: string;
 }
-export type Provider<TName extends string = string> = {
+export type Provider<TRawProfile extends object, TName extends string = string, TProfile extends object = any> = {
     name: TName,
     createAuthorizationURL: <T extends object = any>(state: T, codeVerifier?: string) => Promise<URL>
     refreshAccessToken?: (refreshToken: string) => Promise<Tokens>
     validateAuthorizationCode(code: string, codeVerifier?: string): Promise<Tokens>
+    getProfile: (accessToken: string) => Promise<TProfile & Record<'raw', TRawProfile>>,
 }
 export type ProviderGeneratorParams = {
     clientId: string,
@@ -20,5 +21,9 @@ export type ProviderGeneratorParams = {
 export type ProviderContext = {
     redirectUri: string,
 }
-export type ProviderGenerator = <TName extends string>(name: TName, Provider: any, params: ProviderGeneratorParams) => ProviderWrap<TName>;
-export type ProviderWrap<TName extends string> = (context: ProviderContext) => Provider<TName>;
+export type ProviderConfig<TRawProfile, TProfile> = {
+    profileFetchUri: string,
+    extractRawProfile: (profile: TRawProfile) => TProfile
+}
+export type ProviderGenerator = <TName extends string, TRawProfile extends object = any, TProfile extends object = any>(name: TName, Provider: any, params: ProviderGeneratorParams, config: ProviderConfig<TRawProfile, TProfile>) => ProviderWrap<TName, TRawProfile>;
+export type ProviderWrap<TName extends string, TRawProfile extends object = any> = (context: ProviderContext) => Provider<TRawProfile, TName>;
