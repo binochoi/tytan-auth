@@ -2,6 +2,9 @@
   "name": "@tytan-auth/provider",
   "version": "0.0.1",
   "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],

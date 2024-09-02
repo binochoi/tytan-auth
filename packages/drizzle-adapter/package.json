@@ -2,6 +2,9 @@
   "name": "@tytan-auth/drizzle-adapter",
   "version": "0.0.1",
   "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
@@ -34,7 +37,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "@tytan-auth/common": "workspace:../common",
+    "@tytan-auth/common": "../common",
     "oslo": "^1.2.1",
     "pkgroll": "^2.4.2",
     "typescript": "^5.5.4"

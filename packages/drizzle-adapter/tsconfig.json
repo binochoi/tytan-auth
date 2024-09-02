@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "Node16",
     "target": "ESNext",
     "moduleDetection": "force",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node16",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

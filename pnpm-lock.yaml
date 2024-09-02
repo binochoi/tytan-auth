@@ -73,10 +73,10 @@ importers:
   packages/drizzle-adapter:
     dependencies:
       '@tytan-auth/common':
-        specifier: workspace:../common
+        specifier: ../common
         version: link:../common
       drizzle-orm:
-        specifier: ^0.31.2
+        specifier: 0.31.2
         version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)
       oslo:
         specifier: ^1.2.1

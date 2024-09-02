@@ -1,14 +1,14 @@
 import { StrategyCore } from "@tytan-auth/common";
 import { ProviderWrap } from '@tytan-auth/provider'
 
-interface Tokens {
+export interface Tokens {
     accessToken: string;
     refreshToken?: string | null;
     accessTokenExpiresAt?: Date;
     refreshTokenExpiresAt?: Date | null;
     idToken?: string;
 }
-interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
+export interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
     'createAuthorizationURL': (
         payload: {
             provider: TProviderKey,

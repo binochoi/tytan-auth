@@ -1,1 +1,0 @@
-template for start ts library
