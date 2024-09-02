@@ -2,7 +2,8 @@ import { SetRequired } from 'type-fest';
 import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
 import { TokenManager, TokenManagerParams } from './types/token';
 export type TytanAuthConfigInput = {
-    
+    /** @default false */
+    allowDuplicateEmail?: boolean,
     /**
      *  miliseconds
      *  @default 2min
@@ -18,7 +19,8 @@ export type TytanAuthConfigInput = {
      * */
     refreshTokenExpires?: number,
 };
-export type TytanAuthConfigOutput = SetRequired<TytanAuthConfigInput, 'accessTokenExpires' | 'refreshTokenExpires'>
+export type TytanAuthConfigOutput = SetRequired<TytanAuthConfigInput,
+    'allowDuplicateEmail' | 'accessTokenExpires' | 'refreshTokenExpires'>
 export type TytanSetting = {}
 export type Strategy<
     TOption extends object = any,

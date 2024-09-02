@@ -15,6 +15,7 @@ class TytanAuth {
     ) {
         const config: TytanAuthConfigOutput = {
             ...this._config,
+            allowDuplicateEmail: false,
             accessTokenExpires: 60 * 2,
             refreshTokenExpires: 60 * 60 * 30,
         }
