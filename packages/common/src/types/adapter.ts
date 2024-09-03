@@ -1,5 +1,5 @@
 export interface UserAdapter<TUser extends object = any> {
-    getOneById: (id: number) => Promise<TUser | null>
+    getOneById: (id: number, withTables: any[]) => Promise<TUser | null>
     insertOne: (user: any) => Promise<void>
     // validateLocal(form: { id: string, password: string }): Promise<User>;
 }

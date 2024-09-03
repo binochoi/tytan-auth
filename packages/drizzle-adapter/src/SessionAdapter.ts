@@ -1,30 +1,8 @@
 import { SessionAdapter as Adapter } from '@tytan-auth/common';
 import { and, eq } from 'drizzle-orm';
 import { PgColumn, PgDatabase, PgTableWithColumns } from 'drizzle-orm/pg-core';
+import { DefaultSessionTable } from './types/drizzle';
 
-type Column<T> = PgColumn<
-{
-    name: any;
-    tableName: any;
-    dataType: any;
-    columnType: any;
-    data: T;
-    driverParam: any;
-    notNull: true;
-    hasDefault: any;
-    enumValues: any;
-    baseColumn: any;
-}, object>;
-type DefaultSessionTable = PgTableWithColumns<{
-	dialect: "pg";
-	columns: {
-        id: Column<string>,
-		expiresAt: Column<Date>,
-        token: Column<string>,
-	};
-	schema: any;
-	name: any;
-}>;
 
 
 export class SessionAdapter<
