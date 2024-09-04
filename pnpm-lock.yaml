@@ -142,8 +142,8 @@ importers:
         specifier: ^8.11.6
         version: 8.11.6
       '@tytan-auth/core':
-        specifier: ../core
-        version: link:../core
+        specifier: ../core/dist
+        version: link:../core/dist
       '@tytan-auth/drizzle-adapter':
         specifier: workspace:*
         version: link:../drizzle-adapter

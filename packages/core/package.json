@@ -48,12 +48,12 @@
     },
     "./oauth": {
       "require": {
-        "types": "./dist/strategy/oauth.d.ts",
-        "default": "./dist/strategy/oauth.cjs"
+        "types": "./dist/oauth.d.ts",
+        "default": "./dist/oauth.cjs"
       },
       "import": {
-        "types": "./dist/strategy/oauth.d.ts",
-        "default": "./dist/strategy/oauth.mjs"
+        "types": "./dist/oauth.d.ts",
+        "default": "./dist/oauth.mjs"
       }
     }
   },
