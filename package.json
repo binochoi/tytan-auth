@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm -r run dev",
-    "publish-all": "pnpm publish --filter '@tytan-auth/*' --dry-run"
+    "publish-all": "pnpm publish --no-git-checks --filter '@tytan-auth/*' --dry-run"
   },
   "license": "MIT"
 }
