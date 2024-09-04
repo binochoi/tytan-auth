@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/core",
-  "version": "0.0.23",
+  "version": "0.0.30",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -13,8 +13,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "pkgroll --clean-dist --sourcemap=inline --watch",
-    "build": "pkgroll --clean-dist --minify",
-    "prepublish": "npm version patch"
+    "build": "pkgroll --clean-dist --minify"
   },
   "devDependencies": {
     "@binochoi/eslint-config-typescript": "^0.0.25",
@@ -61,8 +60,8 @@
   "keywords": [],
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.6",
-    "@tytan-auth/common": "workspace:*",
-    "@tytan-auth/provider": "workspace:*",
+    "@tytan-auth/common": "../common",
+    "@tytan-auth/provider": "../provider",
     "arctic": "^1.9.2",
     "jsonwebtoken": "^9.0.2",
     "pkgroll": "^2.4.2",
