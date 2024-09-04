@@ -58,7 +58,14 @@ export class UserAdapter<
                 Object.entries(subTables)
                     .map<DrizzlePgTable>(([_, tables]) => tables as any)
                     .map(
-                        (subtable) => tx.insert(subtable).values(pickObjectProps(subtable, {...user, id }))
+                        (subtable) => {
+                            const payload = pickObjectProps(subtable, user);
+                            const isNotInsertionOfThisTable = Object.keys(payload).length === 0;
+                            if(isNotInsertionOfThisTable) {
+                                return;
+                            }
+                            return tx.insert(subtable).values(pickObjectProps(subtable, {...payload, id }))
+                        }
                     )
             );
         })
