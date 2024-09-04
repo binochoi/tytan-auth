@@ -9,7 +9,7 @@ export class UserAdapter<
     TSubTable extends Record<string, DrizzlePgTable>
 > implements Adapter {
     public readonly types: {
-        $User: TUserTable['$inferSelect']
+        $User: TUserTable['$inferSelect'] & UnionToIntersection<TSubTable[keyof TSubTable]['$inferSelect']>
     }
     private readonly subTables: [keyof TSubTable, TSubTable[keyof TSubTable]][]
     constructor(
