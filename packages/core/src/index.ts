@@ -1,4 +1,4 @@
-import { SessionAdapter, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
+import { SessionAdapter, Strategy, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
 import TokenManager from "./services/TokenManager";
 
 class TytanAuth {
@@ -37,19 +37,24 @@ class TytanAuth {
     }
 }
 const Auth = <
-    TEndpoints extends { [K: string]: any },
-    THelperTypes extends object,
-    TUser extends object,
-    TSession extends object,
-    TStrategyName extends string,
->({ token, strategies, adapters, config }: TytanAuthParams<TEndpoints, THelperTypes, TUser, TSession, TStrategyName>) => {
+    T extends {
+        config?: TytanAuthConfigInput,
+        token: TokenAdapter<any>,
+        strategies: StrategyCore[],
+        adapters: {
+            user: UserAdapter,
+            session: SessionAdapter,
+        },
+        plugins?: any[],
+    },
+>({ token, strategies, adapters, config }: T) => {
     const { adapters: { user, session }, endpoints, types } = new TytanAuth(
         token,
         strategies,
         adapters,
         config,
     );
-    type Strategy = ReturnType<(typeof strategies)[number]>;
+    type Strategy = ReturnType<T['strategies'][number]>;
     return {
         endpoints,
         user,
@@ -57,27 +62,11 @@ const Auth = <
         types,
     } as {
         endpoints: { [K in Strategy['name']]: Strategy['endpoints'] },
-        user: UserAdapter<TUser>,
-        session: SessionAdapter<TSession>,
-        types: THelperTypes
+        user: T['adapters']['user'],
+        session: T['adapters']['session'],
+        types: {
+            $Strategy: T['strategies']
+        }
     };
 }
 export default Auth;
-
-
-export type TytanAuthParams<
-    TEndpoints extends object,
-    THelperTypes extends object,
-    TUser extends object,
-    TSession extends object,
-    TStrategyNames extends string,
-> = {
-    config?: TytanAuthConfigInput,
-    token: TokenAdapter<any>,
-    strategies: StrategyCore<TEndpoints, THelperTypes, TStrategyNames>[],
-    adapters: {
-        user: UserAdapter<TUser>,
-        session: SessionAdapter<TSession>,
-    },
-    plugins?: any[],
-}
