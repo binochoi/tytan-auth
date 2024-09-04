@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm -r run dev",
-    "publish-all": "pnpm publish --no-git-checks --filter '@tytan-auth/*' --dry-run"
+    "publish-all": "run-s publish:*",
+    "publish:common": "cd ./packages/common && pnpm publish --no-git-checks",
+    "publish:core": "cd ./packages/core && pnpm publish --no-git-checks",
+    "publish:provider": "cd ./packages/provider && pnpm publish --no-git-checks",
+    "publish:drizzle-adapter": "cd ./packages/drizzle-adapter && pnpm publish --no-git-checks"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
 }

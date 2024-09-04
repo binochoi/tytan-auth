@@ -6,12 +6,12 @@ export interface Tokens {
     refreshTokenExpiresAt?: Date | null;
     idToken?: string;
 }
-export type Provider<TRawProfile extends object, TName extends string = string, TProfile = {
+export type Provider<TRawProfile extends object = any, TName extends string = string, TProfile extends {
     id: string,
     name?: string,
     email?: string,
     image?: string,
-}> = {
+} = any> = {
     name: TName,
     createAuthorizationURL: <T extends object = any>(state: T, codeVerifier?: string) => Promise<URL>
     refreshAccessToken?: (refreshToken: string) => Promise<Tokens>
