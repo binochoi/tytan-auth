@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm -r run dev",
+    "check-all": "run-s check:*",
+    "check:common": "cd ./packages/common && pnpm build",
+    "check:provider": "cd ./packages/provider && pnpm build",
+    "check:drizzle-adapter": "cd ./packages/drizzle-adapter && pnpm build",
+    "check:core": "cd ./packages/core && pnpm build",
     "publish-all": "run-s publish:*",
     "publish:common": "cd ./packages/common && pnpm publish --no-git-checks",
-    "publish:core": "cd ./packages/core && pnpm publish --no-git-checks",
     "publish:provider": "cd ./packages/provider && pnpm publish --no-git-checks",
-    "publish:drizzle-adapter": "cd ./packages/drizzle-adapter && pnpm publish --no-git-checks"
+    "publish:drizzle-adapter": "cd ./packages/drizzle-adapter && pnpm publish --no-git-checks",
+    "publish:core": "cd ./packages/core && pnpm publish --no-git-checks"
   },
   "license": "MIT",
   "devDependencies": {

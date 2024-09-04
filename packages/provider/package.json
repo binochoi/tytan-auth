@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/provider",
-  "version": "0.0.7",
+  "version": "0.0.12",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "pkgroll --clean-dist --sourcemap=inline --watch",
     "build": "pkgroll --clean-dist --minify",
-    "prepare": "npm version patch && run-s build"
+    "prepublish": "npm version patch"
   },
   "devDependencies": {
     "@binochoi/eslint-config-typescript": "^0.0.25",
