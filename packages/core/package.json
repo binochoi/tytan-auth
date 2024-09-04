@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/core",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -48,12 +48,12 @@
     },
     "./oauth": {
       "require": {
-        "types": "./dist/strategy/oauth.strategy.d.ts",
-        "default": "./dist/strategy/oauth.strategy.cjs"
+        "types": "./dist/strategy/oauth.d.ts",
+        "default": "./dist/strategy/oauth.cjs"
       },
       "import": {
-        "types": "./dist/strategy/oauth.strategy.d.ts",
-        "default": "./dist/strategy/oauth.strategy.mjs"
+        "types": "./dist/strategy/oauth.d.ts",
+        "default": "./dist/strategy/oauth.mjs"
       }
     }
   },
