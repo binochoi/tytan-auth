@@ -21,17 +21,17 @@ class TytanAuth {
         }
         const token = new TokenManager(this.tokenAdapter, config);
         const { endpoints } = this.strategies.map((strategy) => strategy({ token, adapters }))
-        .reduce((prev, current) => ({
-            name: '',
-            types: {
-                ...prev.types,
-                ...current.types,
-            },
-            endpoints: {
-                [prev.name]: prev.endpoints,
-                ...current.endpoints,
-            }
-        }));
+            .reduce((prev, current) => ({
+                name: '',
+                types: {
+                    ...prev.types,
+                    ...current.types,
+                },
+                endpoints: {
+                    [prev.name]: prev.endpoints,
+                    ...current.endpoints,
+                }
+            }));
         this.endpoints = endpoints;
     }
 }
