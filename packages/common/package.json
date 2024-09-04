@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/common",
-  "version": "0.0.22",
+  "version": "0.0.32",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -11,8 +11,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "pkgroll --sourcemap=inline --watch",
-    "build": "pkgroll --clean-dist --minify",
-    "prepublish": "npm version patch"
+    "build": "pkgroll --clean-dist --minify"
   },
   "devDependencies": {
     "@binochoi/eslint-config-typescript": "^0.0.25",
