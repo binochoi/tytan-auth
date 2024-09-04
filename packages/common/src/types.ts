@@ -1,6 +1,16 @@
 import { SetRequired } from 'type-fest';
-import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
-import { TokenManager, TokenManagerParams } from './types/token';
+import type { UserAdapter, SessionAdapter } from './types/adapter';
+import { TokenAdapter, TokenManager } from './types/token';
+export type TytanAuthParams = {
+    config?: TytanAuthConfigInput,
+    token: TokenAdapter<any>,
+    strategies: StrategyCore[],
+    adapters: {
+        user: UserAdapter,
+        session: SessionAdapter,
+    },
+    plugins?: any[],
+}
 export type TytanAuthConfigInput = {
     /** @default false */
     allowDuplicateEmail?: boolean,

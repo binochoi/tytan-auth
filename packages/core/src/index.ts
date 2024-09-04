@@ -1,5 +1,6 @@
-import { SessionAdapter, Strategy, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
+import { SessionAdapter, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
 import TokenManager from "./services/TokenManager";
+import { TytanAuthParams } from "@tytan-auth/common";
 
 class TytanAuth {
     readonly endpoints: { [K: string]: any };
@@ -36,18 +37,7 @@ class TytanAuth {
         this.types = types;
     }
 }
-const Auth = <
-    T extends {
-        config?: TytanAuthConfigInput,
-        token: TokenAdapter<any>,
-        strategies: StrategyCore[],
-        adapters: {
-            user: UserAdapter,
-            session: SessionAdapter,
-        },
-        plugins?: any[],
-    },
->({ token, strategies, adapters, config }: T) => {
+const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }: T) => {
     const { adapters: { user, session }, endpoints, types } = new TytanAuth(
         token,
         strategies,
