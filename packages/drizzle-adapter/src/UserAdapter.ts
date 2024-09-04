@@ -37,7 +37,12 @@ export class UserAdapter<
         Object
             .entries(whereQuery)
             .forEach(([key, val]) => {
-                query = query.where(eq(userTable[key], val)) as any;
+                const tables = [userTable, ...subTables.map(([_, table]) => table)];
+                const table = tables.filter((table) => key in table)[0];
+                if(!table) {
+                    return;
+                }
+                query = query.where(eq(table[key], val)) as any;
             })
         for(const [_, table] of selectedTables) {
             query = query.fullJoin(table, eq(userTable.id, table.id)) as any;

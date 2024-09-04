@@ -3,7 +3,7 @@ export interface UserAdapter<TUser extends object = any> {
     findOne: (
         whereQuery: TUser,
         withTables: any[],
-    ) => Promise<TUser>
+    ) => Promise<TUser | null>
     insertOne: (user: any) => Promise<void>
     // validateLocal(form: { id: string, password: string }): Promise<User>;
 }
