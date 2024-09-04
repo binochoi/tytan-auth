@@ -26,7 +26,6 @@ export class UserAdapter<
             >
         ) | null
         > {
-        
         const { userTable, subTables } = this;
         const selectedTables = subTables.filter(([key]) => withTables.includes(key));
         let query = this.db.select({
