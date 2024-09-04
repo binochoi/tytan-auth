@@ -4,7 +4,6 @@ import { TytanAuthParams } from "@tytan-auth/common";
 
 class TytanAuth {
     readonly endpoints: { [K: string]: any };
-    readonly types: { [K: string]: any };
     constructor(
         private readonly tokenAdapter: TokenAdapter<any>,
         private readonly strategies: StrategyCore[],
@@ -34,11 +33,10 @@ class TytanAuth {
             }
         }));
         this.endpoints = endpoints;
-        this.types = types;
     }
 }
 const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }: T) => {
-    const { adapters: { user, session }, endpoints, types } = new TytanAuth(
+    const { adapters: { user, session }, endpoints } = new TytanAuth(
         token,
         strategies,
         adapters,
@@ -49,14 +47,11 @@ const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }
         endpoints,
         user,
         session,
-        types,
     } as {
         endpoints: { [K in Strategy['name']]: Strategy['endpoints'] },
         user: T['adapters']['user'],
         session: T['adapters']['session'],
-        types: {
-            $Strategy: T['strategies']
-        }
+        types: Strategy['types'] & T['adapters']['user']['types'] & T['adapters']['session']['types']
     };
 }
 export default Auth;

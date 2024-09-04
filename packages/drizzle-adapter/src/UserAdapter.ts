@@ -8,6 +8,9 @@ export class UserAdapter<
     TUserTable extends PgTableWithColumns<any>,
     TSubTable extends Record<string, DrizzlePgTable>
 > implements Adapter {
+    public readonly types: {
+        $User: TUserTable['$inferSelect']
+    }
     private readonly subTables: [keyof TSubTable, TSubTable[keyof TSubTable]][]
     constructor(
         private readonly db: PgDatabase<any ,any, any>,

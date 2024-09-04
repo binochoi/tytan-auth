@@ -9,6 +9,9 @@ export class SessionAdapter<
     TSession extends TSessionTable['$inferSelect'],
     TSessionTable extends DefaultSessionTable,
 > implements Adapter {
+    public readonly types: {
+        $Session: TSessionTable['$inferSelect']
+    }
     constructor(
         private readonly db: PgDatabase<any ,any, any>,
         private readonly sessionTable: TSessionTable,
