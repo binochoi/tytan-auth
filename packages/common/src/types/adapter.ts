@@ -1,6 +1,9 @@
 export interface UserAdapter<TUser extends object = any> {
     types: Record<string, any>
-    getOneById: (id: number, withTables: any[]) => Promise<TUser | null>
+    findOne: (
+        whereQuery: TUser,
+        withTables: string[],
+    ) => Promise<TUser>
     insertOne: (user: any) => Promise<void>
     // validateLocal(form: { id: string, password: string }): Promise<User>;
 }

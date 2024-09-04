@@ -6,10 +6,13 @@ import { pickObjectProps } from './utils/pickObjectProps';
 import { UnionToIntersection } from './utils/UnionToIntersection';
 export class UserAdapter<
     TUserTable extends PgTableWithColumns<any>,
-    TSubTable extends Record<string, DrizzlePgTable>
+    TSubTable extends Record<string, DrizzlePgTable>,
+    $SubUser = UnionToIntersection<TSubTable[keyof TSubTable]['$inferSelect']>,
+    $User = TUserTable['$inferSelect'] & $SubUser
 > implements Adapter {
     public readonly types: {
-        $User: TUserTable['$inferSelect'] & UnionToIntersection<TSubTable[keyof TSubTable]['$inferSelect']>
+        $SubUser: $SubUser,
+        $User: $User
     }
     private readonly subTables: [keyof TSubTable, TSubTable[keyof TSubTable]][]
     constructor(
@@ -19,16 +22,9 @@ export class UserAdapter<
     ) {
         this.subTables = Object.entries(_subTables) as any;
     }
-    async getOneById(id: number, withTables: (keyof TSubTable)[]): Promise<
-        (
-            TUserTable['$inferSelect']
-            & UnionToIntersection<
-                (typeof withTables) extends [] ?
-                    {} :
-                    TSubTable[typeof withTables[number]]['$inferSelect']
-            >
-        ) | null
-        > {
+    async findOne<TWith extends (keyof TSubTable)[]>(whereQuery: Partial<$User>, withTables: TWith): Promise<
+        (TUserTable['$inferSelect'] & UnionToIntersection<TSubTable[TWith[number]]['$inferSelect']>) | null
+    > {
         const { userTable, subTables } = this;
         const selectedTables = subTables.filter(([key]) => withTables.includes(key));
         let query = this.db.select({
@@ -37,12 +33,17 @@ export class UserAdapter<
         })
         .from(userTable)
         .limit(1)
-        .where(eq(this.userTable.id, id))
+        
+        Object
+            .entries(whereQuery)
+            .forEach(([key, val]) => {
+                query = query.where(eq(userTable[key], val)) as any;
+            })
         for(const [_, table] of selectedTables) {
             query = query.fullJoin(table, eq(userTable.id, table.id)) as any;
         }
-        return query
-            .then(([row]) => row ? row : null) as any;
+        const row = (await query) as any;
+        return row ? row : null;
     }
     async insertOne(user: any) {
         const { userTable, subTables } = this;
