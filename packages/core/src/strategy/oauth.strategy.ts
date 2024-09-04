@@ -9,7 +9,7 @@ export interface Tokens {
     idToken?: string;
 }
 export interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
-    'createAuthorizationURL': (
+    createAuthorizationURL: (
         payload: {
             provider: TProviderKey,
             codeVerifier?: string,
@@ -18,17 +18,18 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
             } 
         },
     ) => Promise<URL>,
-    'validateAuthorizationCodeAndGenerateSession': (params: {
+    validateAuthorizationCodeAndGenerateSession: (params: {
         code: string,
         state: string,
         codeVerifier?: string
-    }) => Promise<{ tokens: Tokens, session: TSession }>,
+    }) => Promise<{
+        tokens: Tokens,
+        session: TSession,
+        status: 'beginner' | 'existing'
+    }>,
 };
 type OAuthState<TProviderKey extends string = string> = {
     provider: TProviderKey,
-    user?: {
-        [K: string]: any,
-    }
 }
 type OAuthStrategyTypes<TProviderKey extends string> = {
     $OAuthProvider: TProviderKey,
@@ -53,19 +54,22 @@ const strategy = <TProviderKey extends string, TSession extends object>({
         })
     )
     const endpoints: OauthEndpoints<TProviderKey> = {
-        createAuthorizationURL: async ({ provider: providerName, codeVerifier = '', state: rawState = {} }) => {
-            const provider = providerDict[providerName];
-            const state: OAuthState<TProviderKey> = { ...rawState, provider: providerName };
+        createAuthorizationURL: async ({ provider: providerType, codeVerifier = '', state: rawState = {} }) => {
+            const provider = providerDict[providerType];
+            const state: OAuthState<TProviderKey> = { ...rawState, provider: providerType };
             return provider.createAuthorizationURL(state, codeVerifier);
         },
         validateAuthorizationCodeAndGenerateSession: async ({ code, state, codeVerifier = '' }) => {
-            const { provider: providerName, user } = JSON.parse(state) as OAuthState<TProviderKey>;
-            const provider = providerDict[providerName];
-            const newTokens = await tokenManager.issue(user);
+            const { provider: providerType } = JSON.parse(state) as OAuthState<TProviderKey>;
+            const provider = providerDict[providerType];
             const {
+                accessToken,
                 refreshToken,
-                refreshTokenExpiresAt = newTokens.refreshTokenExpiresAt
+                refreshTokenExpiresAt
             } = await provider.validateAuthorizationCode(code, codeVerifier);
+            const { id: providerId } = await provider.getProfile(accessToken);
+            const user = await userAdapter.findOne({ providerId, providerType }, []);
+            const newTokens = await tokenManager.issue(user);
             if(!refreshToken) {
                 throw new Error('refresh token is not forwarded');
             }
@@ -76,10 +80,19 @@ const strategy = <TProviderKey extends string, TSession extends object>({
             }
             await userAdapter.insertOne(user);
             const session = await sessionAdapter.insertOne(tokens);
-            return { tokens, session };
+            return {
+                tokens,
+                session,
+                status: (() => {
+                    if(!user) {
+                        return 'beginner' as const;
+                    }
+                    return 'existing' as const;
+                })()
+            };
         },
-        // async refreshTokens(providerName, d) {
-        //     const tokens = await providerDict[providerName].refreshAccessToken?.(d.refreshToken);
+        // async refreshTokens(providerType, d) {
+        //     const tokens = await providerDict[providerType].refreshAccessToken?.(d.refreshToken);
         //     if(!tokens) {
         //         throw new Error('refreshed oauth tokens are not exist');
         //     }
