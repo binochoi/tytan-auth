@@ -48,7 +48,7 @@ export class UserAdapter<
         const [row] = (await query);
         return row as TReturn;
     }
-    async insertOne(user: any) {
+    async insertOne(user: (TUserTable['$inferInsert'] & UnionToIntersection<TSubTable[keyof TSubTable]['$inferInsert']>)) {
         const { userTable, subTables } = this;
         return this.db.transaction(async (tx) => {
             const [{ id }] = await tx.insert(userTable).values(pickObjectProps(userTable, user) as any).returning();
