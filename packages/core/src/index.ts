@@ -20,19 +20,12 @@ class TytanAuth {
             refreshTokenExpires: 60 * 60 * 30,
         }
         const token = new TokenManager(this.tokenAdapter, config);
-        const { endpoints } = this.strategies.map((strategy) => strategy({ token, adapters }))
-            .reduce((prev, current) => ({
-                name: '',
-                types: {
-                    ...prev.types,
-                    ...current.types,
-                },
-                endpoints: {
-                    ...current.endpoints,
-                    [prev.name]: prev.endpoints,
-                }
-            }));
-        this.endpoints = endpoints;
+        const strategyCores = this.strategies
+            .map((createStrategy) => {
+                const { name, endpoints } = createStrategy({ token, adapters });
+                return [name, endpoints];
+            })
+        this.endpoints = Object.fromEntries(strategyCores);
     }
 }
 const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }: T) => {
