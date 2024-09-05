@@ -23,8 +23,8 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
         state: string,
         codeVerifier?: string
     }) => Promise<{
-        tokens: Tokens,
-        session: TSession,
+        tokens?: Tokens,
+        session?: TSession,
         status: 'beginner' | 'existing'
     }>,
 };
@@ -67,8 +67,15 @@ const strategy = <TProviderKey extends string, TSession extends object>({
                 refreshToken,
                 refreshTokenExpiresAt
             } = await provider.validateAuthorizationCode(code, codeVerifier);
-            const { id: providerId } = await provider.getProfile(accessToken);
-            const user = await userAdapter.findOne({ providerId, providerType }, []);
+            const { id: providerId, ...profile } = await provider.getProfile(accessToken);
+            const payload = { providerId, providerType };
+            const user = await userAdapter.findOne(payload, []);
+            if(!user) {
+                await userAdapter.insertOne({ ...payload, ...profile });
+                return {
+                    status: 'beginner'
+                }
+            }
             const newTokens = await tokenManager.issue(user);
             if(!refreshToken) {
                 throw new Error('refresh token is not forwarded');
@@ -78,7 +85,6 @@ const strategy = <TProviderKey extends string, TSession extends object>({
                 refreshToken,
                 refreshTokenExpiresAt: newTokens.refreshTokenExpiresAt || refreshTokenExpiresAt
             }
-            await userAdapter.insertOne(user);
             const session = await sessionAdapter.insertOne(tokens);
             return {
                 tokens,
