@@ -13,13 +13,15 @@ const arcticAdapter: ProviderGenerator = (
     { clientId, clientSecret, scopes },
     { profileFetchUri, extractRawProfile },
 ) => ({ redirectUri }) => {
-    const provider = new Provider(clientId, clientSecret, redirectUri) as unknown as OAuth2Provider | OAuth2ProviderWithPKCE;
+    const provider: Promise<OAuth2Provider | OAuth2ProviderWithPKCE> = Provider.then((Provider: any) => {
+        return new Provider(clientId, clientSecret, redirectUri)
+    })
     const createAuthorizationURL = async <T extends object = any>(state: T, codeVerifier = '') => {
-        const isPKCE = provider.createAuthorizationURL.length === 3;
+        const isPKCE = (await provider).createAuthorizationURL.length === 3;
         const options = { scopes };
         const params = isPKCE ? [codeVerifier, options] : [options];
         const stateStr = JSON.stringify(state);
-        const url: URL = await (provider.createAuthorizationURL as any)(stateStr, ...params);
+        const url: URL = await ((await provider).createAuthorizationURL as any)(stateStr, ...params);
         if(name === 'google') {
             url.searchParams.set("access_type", "offline");
         }
@@ -37,9 +39,10 @@ const arcticAdapter: ProviderGenerator = (
             raw,
         }
     }
+    const validateAuthorizationCode = async (code: string, codeVerifier: string) => (await provider).validateAuthorizationCode(code, codeVerifier);
     return {
         name,
-        ...provider,
+        validateAuthorizationCode,
         createAuthorizationURL,
         getProfile,
     }

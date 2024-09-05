@@ -1,12 +1,10 @@
-// import { Google } from 'arctic';
 import arctic from "src/adapters/arctic";
 import { ProviderGeneratorParams } from 'src/types';
 import { KakaoProfile } from "next-auth/providers/kakao";
-import { Kakao } from "arctic";
 
 export default (params: ProviderGeneratorParams) => arctic<'kakao', KakaoProfile>(
     'kakao',
-    Kakao,
+    import('arctic').then(({ Kakao }) => Kakao),
     params,
     {
         profileFetchUri: 'https://kapi.kakao.com/v2/user/me',

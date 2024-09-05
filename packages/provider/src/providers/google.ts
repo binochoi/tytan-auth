@@ -1,12 +1,10 @@
-// import { Google } from 'arctic';
 import arctic from "src/adapters/arctic";
 import { ProviderGeneratorParams } from 'src/types';
 import { GoogleProfile } from 'next-auth/providers/google';
-import { Google } from "arctic";
 
 export default (params: ProviderGeneratorParams) => arctic<'google', GoogleProfile>(
     'google',
-    Google,
+    import('arctic').then(({ Google }) => Google),
     params,
     {
         profileFetchUri: 'https://openidconnect.googleapis.com/v1/userinfo',
