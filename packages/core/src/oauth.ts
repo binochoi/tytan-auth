@@ -32,7 +32,7 @@ type OAuthState<TProviderKey extends string = string> = {
     provider: TProviderKey,
 }
 type OAuthStrategyTypes<TProviderKey extends string> = {
-    $OAuthProvider: TProviderKey,
+    $OAuthProviderName: TProviderKey,
 }
 const strategy = <TProviderKey extends string, TSession extends object>({
     providers,
@@ -117,7 +117,7 @@ const strategy = <TProviderKey extends string, TSession extends object>({
         name: 'oauth',
         endpoints: OauthEndpoints<TProviderKey, TSession>,
         types: {
-            $OAuthProvider: TProviderKey
+            $OAuthProviderName: TProviderKey
         }
     }
 }
