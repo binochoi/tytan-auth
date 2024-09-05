@@ -43,7 +43,7 @@ export class UserAdapter<
                 query = query.where(eq(table[key], val)) as any;
             })
         for(const [_, table] of selectedTables) {
-            query = query.fullJoin(table, eq(userTable.id, table.id)) as any;
+            query = query.leftJoin(table, eq(userTable.id, table.id)) as any;
         }
         const [row] = (await query);
         return row as TReturn;
