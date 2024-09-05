@@ -28,8 +28,8 @@ class TytanAuth {
                     ...current.types,
                 },
                 endpoints: {
-                    [prev.name]: prev.endpoints,
                     ...current.endpoints,
+                    [prev.name]: prev.endpoints,
                 }
             }));
         this.endpoints = endpoints;
