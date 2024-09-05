@@ -22,9 +22,7 @@ export class UserAdapter<
     ) {
         this.subTables = Object.entries(_subTables) as any;
     }
-    async findOne<TWith extends (keyof TSubTable)[]>(whereQuery: Partial<$User>, withTables: TWith): Promise<
-        (TUserTable['$inferSelect'] & UnionToIntersection<TSubTable[TWith[number]]['$inferSelect']>) | null
-    > {
+    async findOne<TWith extends (keyof TSubTable)[], TReturn extends (TUserTable['$inferSelect'] & UnionToIntersection<TSubTable[TWith[number]]['$inferSelect']>) | null>(whereQuery: Partial<$User>, withTables: TWith): Promise<TReturn> {
         const { userTable, subTables } = this;
         const selectedTables = subTables.filter(([key]) => withTables.includes(key));
         let query = this.db.select({
@@ -47,8 +45,8 @@ export class UserAdapter<
         for(const [_, table] of selectedTables) {
             query = query.fullJoin(table, eq(userTable.id, table.id)) as any;
         }
-        const row = (await query) as any;
-        return row ? row : null;
+        const [row] = (await query);
+        return row as TReturn;
     }
     async insertOne(user: any) {
         const { userTable, subTables } = this;
