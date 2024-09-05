@@ -10,7 +10,7 @@ export default (params: ProviderGeneratorParams) => arctic<'kakao', KakaoProfile
         profileFetchUri: 'https://kapi.kakao.com/v2/user/me',
         extractRawProfile(profile){
             return {
-                id: profile.id,
+                id: profile.id + '',
                 name: profile.kakao_account?.profile?.nickname,
                 email: profile.kakao_account?.email,
                 image: profile.kakao_account?.profile?.profile_image_url,

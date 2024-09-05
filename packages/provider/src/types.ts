@@ -7,7 +7,7 @@ export interface Tokens {
     idToken?: string;
 }
 interface Profile {
-    id: string | number,
+    id: string,
     name?: string,
     email?: string,
     image?: string,
