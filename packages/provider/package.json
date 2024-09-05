@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/provider",
-  "version": "0.0.18",
+  "version": "0.0.22",
   "description": "",
   "publishConfig": {
     "access": "public"
