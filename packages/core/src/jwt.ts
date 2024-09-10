@@ -12,12 +12,12 @@ class JwtAdapter<T extends object> implements TokenAdapter<T> {
     }
     async verify(token: string): Promise<T> {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, this.secret, (err, decoded) => {
-                if(err) {
-                    reject(err);
-                } else resolve(decoded as T);
-            });
-        })
+            jwt.verify(
+                token,
+                this.secret,
+                (err, decoded) => err ? reject(err) : resolve(decoded as T)
+            )
+        });
     }
 }
 export default <T extends object>(params: TokenManagerParams) => new JwtAdapter<T>(params);
