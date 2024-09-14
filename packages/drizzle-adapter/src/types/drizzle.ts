@@ -35,8 +35,8 @@ export type DefaultSessionTable = PgTableWithColumns<{
 	dialect: "pg";
 	columns: {
         id: Column<string>,
+		userId: Column<number>,
 		expiresAt: Column<Date>,
-        token: Column<string>,
 	};
 	schema: any;
 	name: any;

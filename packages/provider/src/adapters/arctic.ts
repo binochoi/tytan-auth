@@ -1,5 +1,6 @@
+import { SessionTokens } from "@tytan-auth/common";
 import type { OAuth2Provider, OAuth2ProviderWithPKCE } from "arctic";
-import { ProviderGenerator } from "src/types";
+import { ProviderGenerator, Tokens } from "src/types";
 
 /**
  * @example
@@ -37,7 +38,16 @@ const arcticAdapter: ProviderGenerator = (
             raw,
         }
     }
-    const validateAuthorizationCode = async (code: string, codeVerifier: string) => (await provider).validateAuthorizationCode(code, codeVerifier);
+    const validateAuthorizationCode = async (code: string, codeVerifier: string) => {
+        const tokens = await (await provider).validateAuthorizationCode(code, codeVerifier);
+        return {
+            accessToken: tokens.accessToken,
+            idToken: tokens.idToken || undefined,
+            accessTokenExpiresAt: tokens.accessTokenExpiresAt || undefined,
+            refreshToken: tokens.refreshToken || undefined,
+            refreshTokenExpiresAt: tokens.refreshTokenExpiresAt || undefined,
+        } satisfies Tokens
+    };
     return {
         name,
         validateAuthorizationCode,

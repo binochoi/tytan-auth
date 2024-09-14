@@ -1,4 +1,4 @@
-import { TokenManager as ITokenManager, SessionTokens, TokenAdapter, TytanAuthConfigOutput } from "@tytan-auth/common";
+import { DefaultUser as User, TokenManager as ITokenManager, SessionTokens, TokenAdapter, TytanAuthConfigOutput } from "@tytan-auth/common";
 
 /**
  * at, rt 관리 클래스
@@ -13,7 +13,7 @@ export default class TokenManager<T extends object> implements ITokenManager {
         private readonly token: TokenAdapter<any>,
         private readonly config: TytanAuthConfigOutput
     ) {}
-    async issue(data: T): Promise<SessionTokens> {
+    async generate<T extends User>(data: T): Promise<SessionTokens> {
         const accessTokenExpiresAt = new Date(Date.now() + this.config.accessTokenExpires);
         const accessToken = await this.token.generate(data, accessTokenExpiresAt.getTime());
         const refreshTokenExpiresAt = new Date(Date.now() + this.config.refreshTokenExpires);

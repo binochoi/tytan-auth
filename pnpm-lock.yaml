@@ -86,8 +86,11 @@ importers:
         specifier: ../common
         version: link:../common
       drizzle-orm:
-        specifier: ^0.31.2
+        specifier: 0.31.2
         version: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)
+      drizzle-repository-generator:
+        specifier: ^0.0.10
+        version: 0.0.10(drizzle-orm@0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1))
       oslo:
         specifier: ^1.2.1
         version: 1.2.1
@@ -181,6 +184,9 @@ importers:
 
   packages/provider:
     dependencies:
+      '@tytan-auth/common':
+        specifier: ../common
+        version: link:../common
       arctic:
         specifier: ^1.9.2
         version: 1.9.2
@@ -1248,6 +1254,11 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-repository-generator@0.0.10:
+    resolution: {integrity: sha512-n6Jrrk3V6U7MNOpQ7Iwhzb2fewW/6Gxxau7WWz0U2AMDAiJnqxGcgsCcuT0UPvslRuckFDBEjx86dQzo/tE8pA==}
+    peerDependencies:
+      drizzle-orm: ^0.31.2
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -3243,6 +3254,11 @@ snapshots:
       '@types/pg': 8.11.6
       pg: 8.12.0
       react: 18.3.1
+
+  drizzle-repository-generator@0.0.10(drizzle-orm@0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)):
+    dependencies:
+      drizzle-orm: 0.31.2(@types/pg@8.11.6)(pg@8.12.0)(react@18.3.1)
+      type-fest: 4.26.0
 
   eastasianwidth@0.2.0: {}
 

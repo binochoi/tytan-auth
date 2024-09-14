@@ -1,7 +1,7 @@
 import { SessionAdapter as Adapter } from '@tytan-auth/common';
-import { and, eq } from 'drizzle-orm';
-import { PgColumn, PgDatabase, PgTableWithColumns } from 'drizzle-orm/pg-core';
+import { PgDatabase } from 'drizzle-orm/pg-core';
 import { DefaultSessionTable } from './types/drizzle';
+import { Repository } from 'drizzle-repository-generator';
 
 
 
@@ -12,22 +12,18 @@ export class SessionAdapter<
     public readonly types: {
         $Session: TSessionTable['$inferSelect']
     }
+    private readonly repo;
     constructor(
         private readonly db: PgDatabase<any ,any, any>,
         private readonly sessionTable: TSessionTable,
-    ) {}
+    ) {
+        this.repo = Repository(db, sessionTable);
+    }
     async validate(token: string, refreshTo?: any): Promise<TSession> {
         if(refreshTo) {
             await this.db.update(this.sessionTable).set(refreshTo);
         }
-        const session = await this.db
-            .select()
-            .from(this.sessionTable)
-            .where(
-                and(
-                    eq(this.sessionTable.token, token)
-                )
-            ).then(([row]) => row ? row : null) as TSession;
+        const session = await this.repo.with().find({ id: token } as any).returnFirst() as TSession;
         if(!session) {
             throw new Error('session is not exist');
         }
@@ -35,7 +31,7 @@ export class SessionAdapter<
         if(session.expiresAt < now) {
             throw new Error('session token expired');
         }
-        return session as TSession;
+        return session;
     }
     async insertOne(info: TSession) {
         const [row] = await this.db

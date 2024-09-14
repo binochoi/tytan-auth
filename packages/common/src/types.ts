@@ -1,6 +1,7 @@
 import { SetRequired } from 'type-fest';
-import type { UserAdapter, SessionAdapter } from './types/adapter';
+import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
 import { TokenAdapter, TokenManager } from './types/token';
+import { DefaultSession, DefaultUser } from './types/schema';
 export type TytanAuthParams = {
     config?: TytanAuthConfigInput,
     token: TokenAdapter<any>,
@@ -41,15 +42,41 @@ export type StrategyCore<
     TEndpoints extends object = any,
     THelperTypes extends object = any,
     TName extends string = string,
-> = (context: StrategyContext) => {
+    TTypes extends object = any
+> = (context: StrategyContext<TTypes>) => {
     name: TName,
     endpoints: TEndpoints,
     types: THelperTypes,
 }
-export type StrategyContext = {
+export type StrategyContext<T> = {
     token: TokenManager
-    adapters: {
-        user: UserAdapter,
-        session: SessionAdapter,
-    }
+    user: UserAdapter,
+    session: SessionAdapter,
+    auth: AuthService<any, any>,
+    types: T,
+}
+
+type StatusOnSign = 'newbie' | 'existing';
+export type AuthServiceContext = Omit<StrategyContext<any>, 'auth'>;
+type SignResult<TUser extends DefaultUser, TSession extends DefaultSession> = {
+    user: TUser,
+    session: TSession,
+    tokens: SessionTokens,
+    status: StatusOnSign,
+}
+export type AuthService<
+    TUser extends DefaultUser,
+    TSession extends DefaultSession,
+> = {
+    signup: (user: TUser) => Promise<SignResult<TUser, TSession>>,
+    signin: (user: TUser) => Promise<SignResult<TUser, TSession>>,
+    verifyOrRefresh: (accessToken: string, refreshToken: string) => Promise<
+        Record<'status', 'healthy'> |
+        Record<'status', 'expired'> |
+        Record<'status', 'malformed'> |
+    {
+        status: 'refreshed'
+        session: TSession,
+        tokens: SessionTokens,
+    }>
 }

@@ -1,11 +1,6 @@
+import { SessionTokens } from "@tytan-auth/common";
 
-export interface Tokens {
-    accessToken: string;
-    refreshToken?: string | null;
-    accessTokenExpiresAt?: Date;
-    refreshTokenExpiresAt?: Date | null;
-    idToken?: string;
-}
+export type Tokens = SessionTokens & { idToken?: string };
 interface Profile {
     id: string,
     name?: string,

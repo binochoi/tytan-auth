@@ -18,15 +18,16 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
             } 
         },
     ) => Promise<URL>,
-    validateAuthorizationCodeAndGenerateSession: (params: {
+    validateAndSign: (params: {
         code: string,
         state: string,
         codeVerifier?: string
     }) => Promise<{
         tokens?: Tokens,
-        session?: TSession,
+        user?: any,
+        profile?: any,
         status: 'beginner' | 'existing'
-    }>,
+    }>
 };
 type OAuthState<TProviderKey extends string = string> = {
     provider: TProviderKey,
@@ -42,10 +43,9 @@ const strategy = <TProviderKey extends string, TSession extends object>({
     redirectUri: string,
 }): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
     token: tokenManager,
-    adapters: {
-        user: userAdapter,
-        session: sessionAdapter,
-    }
+    user: userManager,
+    session: sessionManager,
+    auth: authManager,
 }) => {
     const providerDict = Object.fromEntries(
         providers.map(generateProvider => {
@@ -59,24 +59,26 @@ const strategy = <TProviderKey extends string, TSession extends object>({
             const state: OAuthState<TProviderKey> = { ...rawState, provider: providerType };
             return provider.createAuthorizationURL(state, codeVerifier);
         },
-        validateAuthorizationCodeAndGenerateSession: async ({ code, state, codeVerifier = '' }) => {
+        validateAndSign: async ({ code, state, codeVerifier = '' }) => {
             const { provider: providerType } = JSON.parse(state) as OAuthState<TProviderKey>;
             const provider = providerDict[providerType];
             const {
                 accessToken,
                 refreshToken,
-                refreshTokenExpiresAt
+                refreshTokenExpiresAt,
             } = await provider.validateAuthorizationCode(code, codeVerifier);
             const { id: providerId, ...profile } = await provider.getProfile(accessToken);
             const payload = { providerId, providerType };
-            const user = await userAdapter.findOne(payload, []);
-            if(!user) {
-                await userAdapter.insertOne({ ...payload, ...profile });
+            const user = await userManager.findOne(payload, ['oauth']);
+            if(!user || !user?.mail) {
+                const signed = await authManager.signup(user);
+                await userManager.insertOne({ ...payload, ...profile });
                 return {
-                    status: 'beginner'
+                    ...signed,
+                    status: 'beginner',
                 }
             }
-            const newTokens = await tokenManager.issue(user);
+            const newTokens = await tokenManager.generate(user);
             if(!refreshToken) {
                 throw new Error('refresh token is not forwarded');
             }
@@ -85,16 +87,11 @@ const strategy = <TProviderKey extends string, TSession extends object>({
                 refreshToken,
                 refreshTokenExpiresAt: newTokens.refreshTokenExpiresAt || refreshTokenExpiresAt
             }
-            const session = await sessionAdapter.insertOne(tokens);
+            const session = await sessionManager.insertOne(tokens);
             return {
                 tokens,
                 session,
-                status: (() => {
-                    if(!user) {
-                        return 'beginner' as const;
-                    }
-                    return 'existing' as const;
-                })()
+                status: 'existing'
             };
         },
         // async refreshTokens(providerType, d) {
@@ -105,7 +102,7 @@ const strategy = <TProviderKey extends string, TSession extends object>({
         //     if(!tokens.refreshToken) {
         //         throw new Error('refreshed oauth refresh token is not exist');
         //     }
-        //     const session = await sessionAdapter.validate(tokens.refreshToken, tokens);
+        //     const session = await sessionManager.validate(tokens.refreshToken, tokens);
         //     const newTokens = tokenManager.issue(session);
         //     return { tokens, session };
         // }

@@ -19,7 +19,7 @@ export interface SessionAdapter<TSession extends object = any, TSessionId extend
 }
 export type SessionTokens = {
     accessToken: string;
-    accessTokenExpiresAt: Date;
-    refreshToken: string;
-    refreshTokenExpiresAt: Date;
+    accessTokenExpiresAt?: Date;
+    refreshToken?: string;
+    refreshTokenExpiresAt?: Date;
 };
