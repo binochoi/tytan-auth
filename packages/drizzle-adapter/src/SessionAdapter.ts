@@ -28,10 +28,10 @@ export class SessionAdapter<
             throw new Error('session is not exist');
         }
         const now = new Date();
-        if(session.expiresAt < now) {
-            throw new Error('session token expired');
-        }
-        return session;
+        return {
+            ...session,
+            isExpired: session.expiresAt < now
+        };
     }
     async insertOne(info: TSession) {
         const [row] = await this.db

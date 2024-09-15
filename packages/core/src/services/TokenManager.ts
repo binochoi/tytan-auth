@@ -13,10 +13,11 @@ export default class TokenManager<T extends object> implements ITokenManager {
         private readonly token: TokenAdapter<any>,
         private readonly config: TytanAuthConfigOutput
     ) {}
-    async generate<T extends User>(data: T): Promise<SessionTokens> {
-        const accessTokenExpiresAt = new Date(Date.now() + this.config.accessTokenExpires);
+    async generate<T extends User>(data: T) {
+        const { accessTokenExpires, refreshTokenExpires } = this.config;
+        const accessTokenExpiresAt = new Date(Date.now() + accessTokenExpires);
         const accessToken = await this.token.generate(data, accessTokenExpiresAt.getTime());
-        const refreshTokenExpiresAt = new Date(Date.now() + this.config.refreshTokenExpires);
+        const refreshTokenExpiresAt = new Date(Date.now() + refreshTokenExpires);
         const refreshToken = await this.token.generate(data, refreshTokenExpiresAt.getTime());
         return {
             accessToken,

@@ -23,8 +23,8 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
         state: string,
         codeVerifier?: string
     }) => Promise<{
-        tokens?: Tokens,
-        user?: any,
+        tokens: Tokens,
+        user: any,
         profile?: any,
         status: 'beginner' | 'existing'
     }>
@@ -64,35 +64,21 @@ const strategy = <TProviderKey extends string, TSession extends object>({
             const provider = providerDict[providerType];
             const {
                 accessToken,
-                refreshToken,
-                refreshTokenExpiresAt,
+                // refreshToken,
+                // refreshTokenExpiresAt,
             } = await provider.validateAuthorizationCode(code, codeVerifier);
             const { id: providerId, ...profile } = await provider.getProfile(accessToken);
             const payload = { providerId, providerType };
             const user = await userManager.findOne(payload, ['oauth']);
-            if(!user || !user?.mail) {
-                const signed = await authManager.signup(user);
+            if(!user) {
+                const signed = await authManager.signup(payload);
                 await userManager.insertOne({ ...payload, ...profile });
                 return {
                     ...signed,
                     status: 'beginner',
                 }
             }
-            const newTokens = await tokenManager.generate(user);
-            if(!refreshToken) {
-                throw new Error('refresh token is not forwarded');
-            }
-            const tokens = {
-                ...newTokens,
-                refreshToken,
-                refreshTokenExpiresAt: newTokens.refreshTokenExpiresAt || refreshTokenExpiresAt
-            }
-            const session = await sessionManager.insertOne(tokens);
-            return {
-                tokens,
-                session,
-                status: 'existing'
-            };
+            return authManager.signin({ id: user.id });
         },
         // async refreshTokens(providerType, d) {
         //     const tokens = await providerDict[providerType].refreshAccessToken?.(d.refreshToken);

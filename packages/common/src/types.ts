@@ -56,7 +56,7 @@ export type StrategyContext<T> = {
     types: T,
 }
 
-type StatusOnSign = 'newbie' | 'existing';
+type StatusOnSign = 'beginner' | 'existing';
 export type AuthServiceContext = Omit<StrategyContext<any>, 'auth'>;
 type SignResult<TUser extends DefaultUser, TSession extends DefaultSession> = {
     user: TUser,

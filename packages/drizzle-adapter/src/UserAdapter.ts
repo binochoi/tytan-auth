@@ -1,7 +1,6 @@
 import { PgDatabase, PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { UserAdapter as Adapter } from '@tytan-auth/common';
 import { DrizzlePgTable } from './types/drizzle';
-import { pickObjectProps } from './utils/pickObjectProps';
 import { UnionToIntersection } from './utils/UnionToIntersection';
 import { Repository } from 'drizzle-repository-generator';
 export class UserAdapter<
@@ -31,23 +30,6 @@ export class UserAdapter<
         return this.repo.with(...withTables).find(whereQuery as any).returnFirst();
     }
     async insertOne(user: (TUserTable['$inferInsert'] & UnionToIntersection<TSubTable[keyof TSubTable]['$inferInsert']>)) {
-        const { userTable, subTables } = this;
-        return this.db.transaction(async (tx) => {
-            const [{ id }] = await tx.insert(userTable).values(pickObjectProps(userTable, user) as any).returning();
-            await Promise.all(
-                Object.entries(subTables)
-                    .map<DrizzlePgTable>(([_, tables]) => tables as any)
-                    .map(
-                        (subtable) => {
-                            const payload = pickObjectProps(subtable, user);
-                            const isNotInsertionOfThisTable = Object.keys(payload).length === 0;
-                            if(isNotInsertionOfThisTable) {
-                                return;
-                            }
-                            return tx.insert(subtable).values(pickObjectProps(subtable, {...payload, id }))
-                        }
-                    )
-            );
-        })
+        return this.repo.insert(user as any);
     }
 }
