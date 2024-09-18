@@ -1,4 +1,4 @@
-import { DefaultUser as User, TokenManager as ITokenManager, SessionTokens, TokenAdapter, TytanAuthConfigOutput } from "@tytan-auth/common";
+import { DefaultUser as User, DefaultSession as Session, TokenManager as ITokenManager, SessionTokens, TokenAdapter, TytanAuthConfigOutput } from "@tytan-auth/common";
 
 /**
  * at, rt 관리 클래스
@@ -13,17 +13,19 @@ export default class TokenManager<T extends object> implements ITokenManager {
         private readonly token: TokenAdapter<any>,
         private readonly config: TytanAuthConfigOutput
     ) {}
-    async generate<T extends User>(data: T) {
-        const { accessTokenExpires, refreshTokenExpires } = this.config;
-        const accessTokenExpiresAt = new Date(Date.now() + accessTokenExpires);
-        const accessToken = await this.token.generate(data, accessTokenExpiresAt.getTime());
-        const refreshTokenExpiresAt = new Date(Date.now() + refreshTokenExpires);
-        const refreshToken = await this.token.generate(data, refreshTokenExpiresAt.getTime());
+    
+    async generate<TUser extends User, TSession extends Session>(at: TUser, rt?: TSession) {
+        const { accessTokenExpires, refreshTokenExpires, setUserTokenAttributes } = this.config;
+        const accessToken = await this.token.generate(setUserTokenAttributes(at), accessTokenExpires);
+        if(!rt) {
+            return { accessToken, accessTokenExpires, refreshToken: '', refreshTokenExpires: 0 }
+        }
+        const refreshToken = await this.token.generate(rt, refreshTokenExpires);
         return {
             accessToken,
-            accessTokenExpiresAt,
+            accessTokenExpires,
             refreshToken,
-            refreshTokenExpiresAt
+            refreshTokenExpires
         }
     }
     /** @param token at or rt */

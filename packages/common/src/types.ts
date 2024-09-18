@@ -14,7 +14,7 @@ export type TytanAuthParams = {
 }
 export type TytanAuthConfigInput = {
     /** @default false */
-    allowDuplicateEmail?: boolean,
+    // allowDuplicateEmail?: boolean,
     /**
      *  miliseconds
      *  @default 2min
@@ -29,9 +29,13 @@ export type TytanAuthConfigInput = {
      * @default 1month
      * */
     refreshTokenExpires?: number,
+    /** refresh token이 기간이 어느정도 남았을 때 refresh를 하는지 결정한다 */
+    refreshTokenRenewalPeriod?: number,
+    sessionIdSize?: number,
+    /** 토큰에 넣어놓을 유저 데이터 */
+    setUserTokenAttributes?: (user: any) => any,
 };
-export type TytanAuthConfigOutput = SetRequired<TytanAuthConfigInput,
-    'allowDuplicateEmail' | 'accessTokenExpires' | 'refreshTokenExpires'>
+export type TytanAuthConfigOutput = Required<TytanAuthConfigInput>
 export type TytanSetting = {}
 export type Strategy<
     TOption extends object = any,
@@ -70,13 +74,23 @@ export type AuthService<
 > = {
     signup: (user: TUser) => Promise<SignResult<TUser, TSession>>,
     signin: (user: TUser) => Promise<SignResult<TUser, TSession>>,
-    verifyOrRefresh: (accessToken: string, refreshToken: string) => Promise<
+    verifyOrRefresh: (accessToken?: string, refreshToken?: string) => Promise<
+        /** at 건재함 */
         Record<'status', 'healthy'> |
+        /** at, rt 만료되거나 없음 */
         Record<'status', 'expired'> |
+        /** at가 이상하거나 rt가 이상함 */
         Record<'status', 'malformed'> |
-    {
-        status: 'refreshed'
-        session: TSession,
-        tokens: SessionTokens,
-    }>
+        /** at refreshed */
+        {
+            status: 'refreshed',
+            tokens: Pick<SessionTokens, 'accessToken' | 'accessTokenExpires'>,
+            user: TUser,
+        } |
+        {
+            status: 'regenerated',
+            user: TUser,
+            session: TSession,
+            tokens: SessionTokens,
+        }>
 }

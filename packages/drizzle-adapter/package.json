@@ -1,6 +1,6 @@
 {
   "name": "@tytan-auth/drizzle-adapter",
-  "version": "0.0.30",
+  "version": "0.0.36",
   "description": "",
   "publishConfig": {
     "access": "public"

@@ -1,4 +1,4 @@
-import { SessionAdapter, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
+import { AuthService, SessionAdapter, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
 import TokenManager from "./services/TokenManager";
 import { TytanAuthParams } from "@tytan-auth/common";
 import { getAuthService } from "./services/AuthService";
@@ -8,6 +8,7 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
     session: T['adapters']['session']['types']['$Session'],
 }> {
     readonly endpoints: { [K: string]: any };
+    readonly authService: AuthService<any, any>;
     constructor(
         private readonly tokenAdapter: TokenAdapter<any>,
         private readonly strategies: StrategyCore[],
@@ -18,13 +19,22 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
         private readonly _config?: TytanAuthConfigInput
     ) {
         const config: TytanAuthConfigOutput = {
+            accessTokenExpires: /* @default 2min */ 60 * 2,
+            refreshTokenExpires: /* @default 30days */ 60 * 60 * 24 * 30,
+            sessionIdSize: 12,
+            refreshTokenRenewalPeriod: 0,
+            /**
+             * 기본적으로 user id와 role을 갖고 있지만,
+             * 서비스가 커질수록 attribute를 추가할 여지가 있음
+             */
+            setUserTokenAttributes: ({ id, role }: any) => ({
+                id,
+                ...(role ? { role }: {}),
+            }),
             ...this._config,
-            allowDuplicateEmail: false,
-            accessTokenExpires: 60 * 2,
-            refreshTokenExpires: 60 * 60 * 30,
         }
         const token = new TokenManager(this.tokenAdapter, config);
-        const auth = getAuthService({ token, ...adapters });
+        const auth = this.authService = getAuthService({ token, config, ...adapters });
         const strategyCores = this.strategies
             .map((createStrategy) => {
                 const { name, endpoints } = createStrategy({ token, ...adapters, auth, types: {} as any });
@@ -34,7 +44,7 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
     }
 }
 const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }: T) => {
-    const { adapters: { user, session }, endpoints } = new TytanAuth<T>(
+    const { adapters: { user, session }, endpoints, authService } = new TytanAuth<T>(
         token,
         strategies,
         adapters,
@@ -43,12 +53,15 @@ const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }
     type Strategy = ReturnType<T['strategies'][number]>;
     return {
         ...endpoints,
+        ...authService,
         user,
         session,
     } as {
         user: T['adapters']['user'],
         session: T['adapters']['session'],
         types: Strategy['types'] & T['adapters']['user']['types'] & T['adapters']['session']['types']
-    } & { [K in Strategy['name']]: Strategy['endpoints'] };
+    } & {
+        [K in Strategy['name']]: Strategy['endpoints']
+    } & AuthService<any, any>;
 }
 export default Auth;

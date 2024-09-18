@@ -7,11 +7,18 @@ interface Profile {
     email?: string,
     image?: string,
 }
+type OAuthTokens = {
+    accessToken: string;
+    refreshToken?: string | null;
+    accessTokenExpiresAt?: Date;
+    refreshTokenExpiresAt?: Date | null;
+    idToken?: string;
+}
 export type Provider<TRawProfile = any, TName extends string = string> = {
     name: TName,
     createAuthorizationURL: <T extends object = any>(state: T, codeVerifier?: string) => Promise<URL>
-    refreshAccessToken?: (refreshToken: string) => Promise<Tokens>
-    validateAuthorizationCode(code: string, codeVerifier?: string): Promise<Tokens>
+    refreshAccessToken?: (refreshToken: string) => Promise<OAuthTokens>
+    validateAuthorizationCode(code: string, codeVerifier?: string): Promise<OAuthTokens>
     getProfile: (accessToken: string) => Promise<Profile & Record<'raw', TRawProfile>>,
 }
 export type ProviderGeneratorParams = {

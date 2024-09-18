@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "pnpm -r run dev",
     "check-all": "run-s check:*",
-    "check:common": "cd ./packages/common/dist && pnpm build",
+    "check:common": "cd ./packages/common && pnpm build",
     "check:provider": "cd ./packages/provider && pnpm build",
     "check:drizzle-adapter": "cd ./packages/drizzle-adapter && pnpm build",
     "check:core": "cd ./packages/core && pnpm build",

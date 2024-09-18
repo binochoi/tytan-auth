@@ -39,14 +39,7 @@ const arcticAdapter: ProviderGenerator = (
         }
     }
     const validateAuthorizationCode = async (code: string, codeVerifier: string) => {
-        const tokens = await (await provider).validateAuthorizationCode(code, codeVerifier);
-        return {
-            accessToken: tokens.accessToken,
-            idToken: tokens.idToken || undefined,
-            accessTokenExpiresAt: tokens.accessTokenExpiresAt || undefined,
-            refreshToken: tokens.refreshToken || undefined,
-            refreshTokenExpiresAt: tokens.refreshTokenExpiresAt || undefined,
-        } satisfies Tokens
+        return (await provider).validateAuthorizationCode(code, codeVerifier);
     };
     return {
         name,

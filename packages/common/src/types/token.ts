@@ -3,8 +3,10 @@ import { SessionTokens } from "./adapter";
 
 export type TokenManagerParams = { secret: string }
 export interface TokenManager {
-    generate: (data: any) => Promise<Required<SessionTokens>>,
-    validate: (accessToken: string) => Promise<any>
+    generate(at: any): Promise<Pick<Required<SessionTokens>, 'accessToken' | 'accessTokenExpires'>>,
+    generate(at: any, rt: any): Promise<Required<SessionTokens>>,
+    /** @param atOrRt access token or refresh token */
+    validate: (atOrRt: string) => Promise<any>,
 }
 export interface TokenAdapter<T extends object> {
     generate(payload: T, expiresAt: number): Promise<string>,

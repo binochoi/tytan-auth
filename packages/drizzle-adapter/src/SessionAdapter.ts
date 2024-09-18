@@ -1,4 +1,4 @@
-import { SessionAdapter as Adapter } from '@tytan-auth/common';
+import { SessionAdapter as Adapter, SessionTokens } from '@tytan-auth/common';
 import { PgDatabase } from 'drizzle-orm/pg-core';
 import { DefaultSessionTable } from './types/drizzle';
 import { Repository } from 'drizzle-repository-generator';
@@ -8,7 +8,7 @@ import { Repository } from 'drizzle-repository-generator';
 export class SessionAdapter<
     TSession extends TSessionTable['$inferSelect'],
     TSessionTable extends DefaultSessionTable,
-> implements Adapter {
+> implements Adapter<TSession> {
     public readonly types: {
         $Session: TSessionTable['$inferSelect']
     }
@@ -19,15 +19,21 @@ export class SessionAdapter<
     ) {
         this.repo = Repository(db, sessionTable);
     }
-    async validate(token: string, refreshTo?: any): Promise<TSession> {
-        if(refreshTo) {
-            await this.db.update(this.sessionTable).set(refreshTo);
-        }
-        const session = await this.repo.with().find({ id: token } as any).returnFirst() as TSession;
-        if(!session) {
-            throw new Error('session is not exist');
-        }
+    /** validate and refresh if wanted */
+    async validate(id: string, refreshTo?: Pick<TSession, 'id' | 'expiresAt'>): Promise<TSession | null> {
         const now = new Date();
+        if(refreshTo) {
+            const session = await this.repo.update(refreshTo as any)
+                .where({ id } as any) as TSession
+            return {
+                ...session,
+                isExpired: session.expiresAt < now,
+            }
+        }
+        const session = await this.repo.with().find({ id } as any).returnFirst() as TSession;
+        if(!session) {
+            return null;
+        }
         return {
             ...session,
             isExpired: session.expiresAt < now
@@ -38,7 +44,7 @@ export class SessionAdapter<
             .insert(this.sessionTable)
             .values(info)
             .returning();
-        return row.id;
+        return row as TSession;
     }
     // generate: (param: { refreshToken: any; accessToken: any; }) => Promise<SessionTokens>;
     // generateTokens: (param: { refreshToken: any; accessToken: any; }) => Promise<SessionTokens>;

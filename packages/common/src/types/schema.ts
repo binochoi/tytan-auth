@@ -8,8 +8,9 @@ export type DefaultUser = {
     [K: string]: string | number | Date,
 }
 export type DefaultSession = {
-    id: string, // refreshToken,
+    id: string,
     userId: number,
     expiresAt: Date,
+    token: string,
     [K: string]: string | number | Date,
 }

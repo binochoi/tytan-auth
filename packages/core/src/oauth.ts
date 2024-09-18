@@ -1,13 +1,6 @@
-import { StrategyCore } from "@tytan-auth/common";
+import { SessionTokens, StrategyCore } from "@tytan-auth/common";
 import { ProviderWrap } from '@tytan-auth/provider'
 
-export interface Tokens {
-    accessToken: string;
-    refreshToken?: string | null;
-    accessTokenExpiresAt?: Date;
-    refreshTokenExpiresAt?: Date | null;
-    idToken?: string;
-}
 export interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
     createAuthorizationURL: (
         payload: {
@@ -23,9 +16,10 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
         state: string,
         codeVerifier?: string
     }) => Promise<{
-        tokens: Tokens,
+        tokens: SessionTokens,
         user: any,
         profile?: any,
+        session: any,
         status: 'beginner' | 'existing'
     }>
 };
@@ -72,13 +66,16 @@ const strategy = <TProviderKey extends string, TSession extends object>({
             const user = await userManager.findOne(payload, ['oauth']);
             if(!user) {
                 const signed = await authManager.signup(payload);
-                await userManager.insertOne({ ...payload, ...profile });
                 return {
                     ...signed,
-                    status: 'beginner',
+                    profile,
                 }
             }
-            return authManager.signin({ id: user.id });
+            const signed = await authManager.signin({ id: user.id });
+            return {
+                ...signed,
+                profile,
+            }
         },
         // async refreshTokens(providerType, d) {
         //     const tokens = await providerDict[providerType].refreshAccessToken?.(d.refreshToken);

@@ -14,12 +14,12 @@ export interface SessionAdapter<TSession extends object = any, TSessionId extend
      * @param refreshTo
      * refreshToken의 기간을 업데이트하고 토큰을 바꿔치기 할지
      */
-    validate: (refreshToken: string, refreshTo?: TSession extends Record<'id' | 'expiresAt', any> ? Pick<TSession, 'id' | 'expiresAt'> : unknown) => Promise<TSession>;
+    validate: (refreshToken: string, refreshTo?: TSession) => Promise<TSession | null>;
     insertOne: (info: TSession) => Promise<TSession>;
 }
 export type SessionTokens = {
     accessToken: string;
-    accessTokenExpiresAt?: Date;
-    refreshToken?: string;
-    refreshTokenExpiresAt?: Date;
+    accessTokenExpires: number;
+    refreshToken: string;
+    refreshTokenExpires: number;
 };
