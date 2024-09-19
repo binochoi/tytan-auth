@@ -10,7 +10,7 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
     readonly endpoints: { [K: string]: any };
     readonly authService: AuthService<any, any>;
     constructor(
-        private readonly tokenAdapter: TokenAdapter<any>,
+        readonly tokenManager: TokenAdapter<any>,
         private readonly strategies: StrategyCore[],
         public readonly adapters: {
             user: T['adapters']['user'],
@@ -33,7 +33,7 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
             }),
             ...this._config,
         }
-        const token = new TokenManager(this.tokenAdapter, config);
+        const token = new TokenManager(this.tokenManager, config);
         const auth = this.authService = getAuthService({ token, config, ...adapters });
         const strategyCores = this.strategies
             .map((createStrategy) => {
@@ -44,7 +44,7 @@ class TytanAuth<T extends TytanAuthParams, TInjectableTypes = {
     }
 }
 const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }: T) => {
-    const { adapters: { user, session }, endpoints, authService } = new TytanAuth<T>(
+    const { adapters: { user, session }, endpoints, authService, tokenManager } = new TytanAuth<T>(
         token,
         strategies,
         adapters,
@@ -56,9 +56,11 @@ const Auth = <T extends TytanAuthParams>({ token, strategies, adapters, config }
         ...authService,
         user,
         session,
+        tokenManager,
     } as {
         user: T['adapters']['user'],
         session: T['adapters']['session'],
+        tokenManager: TokenAdapter<any>,
         types: Strategy['types'] & T['adapters']['user']['types'] & T['adapters']['session']['types']
     } & {
         [K in Strategy['name']]: Strategy['endpoints']
