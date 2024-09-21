@@ -46,6 +46,9 @@ export class SessionAdapter<
             .returning();
         return row as TSession;
     }
+    async deleteOne(where: Partial<TSession>) {
+        return this.repo.delete(where) as Promise<TSession>;
+    }
     // generate: (param: { refreshToken: any; accessToken: any; }) => Promise<SessionTokens>;
     // generateTokens: (param: { refreshToken: any; accessToken: any; }) => Promise<SessionTokens>;
     // refreshAccessToken: (param: { refreshToken: any; accessToken: any; }) => Promise<SessionTokens>;

@@ -16,6 +16,7 @@ export interface SessionAdapter<TSession extends object = any, TSessionId extend
      */
     validate: (refreshToken: string, refreshTo?: TSession) => Promise<TSession | null>;
     insertOne: (info: TSession) => Promise<TSession>;
+    deleteOne: (where: Partial<TSession>) => Promise<TSession>;
 }
 export type SessionTokens = {
     accessToken: string;

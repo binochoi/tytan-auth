@@ -88,6 +88,10 @@ export const getAuthService = ({
                     status: 'expired' as const,
                 }
             }
+        },
+        async logout(refreshToken: string) {
+            const { id } = await tokenManager.validate(refreshToken);
+            return sessionManager.deleteOne({ id });
         }
     }
 }

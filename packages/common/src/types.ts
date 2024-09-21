@@ -93,4 +93,5 @@ export type AuthService<
             session: TSession,
             tokens: SessionTokens,
         }>
+    logout: (refreshToken: string) => Promise<TSession>
 }
