@@ -36,9 +36,7 @@ const strategy = <TProviderKey extends string, TSession extends object>({
     providers: ProviderWrap<TProviderKey>[],
     redirectUri: string,
 }): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
-    token: tokenManager,
     user: userManager,
-    session: sessionManager,
     auth: authManager,
 }) => {
     const providerDict = Object.fromEntries(
@@ -58,8 +56,6 @@ const strategy = <TProviderKey extends string, TSession extends object>({
             const provider = providerDict[providerType];
             const {
                 accessToken,
-                // refreshToken,
-                // refreshTokenExpiresAt,
             } = await provider.validateAuthorizationCode(code, codeVerifier);
             const { id: providerId, ...profile } = await provider.getProfile(accessToken);
             const payload = { providerId, providerType };
@@ -77,18 +73,6 @@ const strategy = <TProviderKey extends string, TSession extends object>({
                 profile,
             }
         },
-        // async refreshTokens(providerType, d) {
-        //     const tokens = await providerDict[providerType].refreshAccessToken?.(d.refreshToken);
-        //     if(!tokens) {
-        //         throw new Error('refreshed oauth tokens are not exist');
-        //     }
-        //     if(!tokens.refreshToken) {
-        //         throw new Error('refreshed oauth refresh token is not exist');
-        //     }
-        //     const session = await sessionManager.validate(tokens.refreshToken, tokens);
-        //     const newTokens = tokenManager.issue(session);
-        //     return { tokens, session };
-        // }
     }
     return {
         name: 'oauth' as const,
