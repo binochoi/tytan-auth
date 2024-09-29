@@ -1,10 +1,10 @@
-import { StrategyCore } from "@tytan-auth/common";
-import { OauthEndpoints, OAuthParam, OAuthState, OAuthStrategyTypes } from 'src/types/oauth.type';
+import { Strategy } from "@tytan-auth/common";
+import { OauthEndpoints, OAuthParam, OAuthState } from 'src/types/oauth.type';
 
-const strategy = <TProviderKey extends string, TSession extends object>({
+const strategy: Strategy = <TProviderKey extends string, TSession extends object>({
     providers,
     redirectUri
-}: OAuthParam<TProviderKey>): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
+}: OAuthParam<TProviderKey>) => ({
     user: userManager,
     auth: authManager,
 }) => {
