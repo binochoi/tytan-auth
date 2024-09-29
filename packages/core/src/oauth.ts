@@ -1,41 +1,10 @@
-import { SessionTokens, StrategyCore } from "@tytan-auth/common";
-import { ProviderWrap } from '@tytan-auth/provider'
+import { StrategyCore } from "@tytan-auth/common";
+import { OauthEndpoints, OAuthParam, OAuthState, OAuthStrategyTypes } from 'src/types/oauth.type';
 
-export interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
-    createAuthorizationURL: (
-        payload: {
-            provider: TProviderKey,
-            codeVerifier?: string,
-            state?: {
-                [K: string]: any,
-            } 
-        },
-    ) => Promise<URL>,
-    validateAndSign: (params: {
-        code: string,
-        state: string,
-        codeVerifier?: string
-    }) => Promise<{
-        tokens: SessionTokens,
-        user: any,
-        profile?: any,
-        session: any,
-        status: 'beginner' | 'existing'
-    }>
-};
-type OAuthState<TProviderKey extends string = string> = {
-    provider: TProviderKey,
-}
-type OAuthStrategyTypes<TProviderKey extends string> = {
-    $OAuthProviderName: TProviderKey,
-}
 const strategy = <TProviderKey extends string, TSession extends object>({
     providers,
     redirectUri
-}: {
-    providers: ProviderWrap<TProviderKey>[],
-    redirectUri: string,
-}): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
+}: OAuthParam<TProviderKey>): StrategyCore<OauthEndpoints<TProviderKey>, OAuthStrategyTypes<TProviderKey>, 'oauth'> => ({
     user: userManager,
     auth: authManager,
 }) => {

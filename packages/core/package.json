@@ -50,12 +50,12 @@
     },
     "./oauth": {
       "require": {
-        "types": "./dist/oauth.d.ts",
-        "default": "./dist/oauth.cjs"
+        "types": "./dist/strategies/oauth.d.ts",
+        "default": "./dist/strategies/oauth.cjs"
       },
       "import": {
-        "types": "./dist/oauth.d.ts",
-        "default": "./dist/oauth.mjs"
+        "types": "./dist/strategies/oauth.d.ts",
+        "default": "./dist/strategies/oauth.mjs"
       }
     }
   },
