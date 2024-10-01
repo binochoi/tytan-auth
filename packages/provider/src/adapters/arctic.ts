@@ -21,7 +21,7 @@ const arcticAdapter: ProviderGenerator = (
         const params = isPKCE ? [codeVerifier, options] : [options];
         const stateStr = JSON.stringify(state);
         const url: URL = await ((await provider).createAuthorizationURL as any)(stateStr, ...params);
-        if(name === 'google') {
+        if (name === 'google') {
             url.searchParams.set("access_type", "offline");
         }
         return url;
