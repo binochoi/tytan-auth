@@ -36,7 +36,7 @@ export const getAuthService = ({
             const session = await sessionManager.insertOne({
                 id,
                 userId: newUser.id,
-                expiresAt: new Date().getTime() + tokens.refreshTokenExpires,
+                expiresAt: new Date(new Date().getTime() + tokens.refreshTokenExpires),
                 token: tokens.refreshToken,
             });
             const status: 'existing' | 'beginner' = newUser.mail ? 'existing' : 'beginner';
