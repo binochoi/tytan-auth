@@ -1,7 +1,9 @@
 import { SessionTokens } from "@tytan-auth/common";
 import type { OAuth2Provider, OAuth2ProviderWithPKCE } from "arctic";
 import { ProviderGenerator, Tokens } from "src/types";
+import { PromiseOrNot } from "src/types/PromiseOrNot";
 
+type Provider = OAuth2Provider | OAuth2ProviderWithPKCE;
 /**
  * @example
  * ```ts
@@ -14,7 +16,8 @@ const arcticAdapter: ProviderGenerator = (
     { clientId, clientSecret, scopes },
     { profileFetchUri, extractRawProfile },
 ) => ({ redirectUri }) => {
-    const provider: Promise<OAuth2Provider | OAuth2ProviderWithPKCE> = Provider.then((Provider: any) => new Provider(clientId, clientSecret, redirectUri))
+    const createProviderInstance = (Provider: any): Provider => new Provider(clientId, clientSecret, redirectUri);
+    const provider: PromiseOrNot<Provider> = Provider instanceof Promise ? Provider.then(createProviderInstance) : createProviderInstance(Provider);
     const createAuthorizationURL = async <T extends object = any>(state: T, codeVerifier = '') => {
         const isPKCE = (await provider).createAuthorizationURL.length === 3;
         const options = { scopes };
