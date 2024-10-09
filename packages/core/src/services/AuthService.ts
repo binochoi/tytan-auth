@@ -15,22 +15,6 @@ export const getAuthService = ({
     return {
         async signup(userInfo: DefaultUser) {
             const id = generateUid();
-            const { mail } = userInfo;
-            const user = await userManager.findOne({ mail }, []);
-            if(user) {
-                const tokens = await tokenManager.generate(user, { id, userId: user.id });
-                const session = await sessionManager.insertOne({
-                    id,
-                    userId: user.id,
-                    token: tokens.refreshToken,
-                });
-                return {
-                    user,
-                    session,
-                    tokens,
-                    status: 'existing' as const,
-                }
-            }
             const newUser = await userManager.insertOne(userInfo);
             const tokens = await tokenManager.generate(newUser, { id, userId: newUser.id });
             const session = await sessionManager.insertOne({
@@ -47,22 +31,18 @@ export const getAuthService = ({
                 status,
             }
         },
-        async signin(where: DefaultUser) {
+        async signin(userInfo: DefaultUser) {
             const id = generateUid();
-            const user = await userManager.findOne(where, ['oauth']);
-            if(!user) {
-                throw new Error('user is not exist');
-            }
-            const tokens = await tokenManager.generate(user, { id, userId: user.id });
+            const tokens = await tokenManager.generate(userInfo, { id, userId: userInfo.id });
             const session = await sessionManager.insertOne({
                 id,
-                userId: user.id,
+                userId: userInfo.id,
                 expiresAt: new Date(new Date().getTime() + tokens.refreshTokenExpires),
                 token: tokens.refreshToken,
             });
-            const status: 'existing' | 'beginner' = user.mail ? 'existing' : 'beginner';
+            const status: 'existing' | 'beginner' = userInfo.mail ? 'existing' : 'beginner';
             return {
-                user,
+                user: userInfo,
                 session,
                 tokens,
                 status,
