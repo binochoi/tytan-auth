@@ -1,7 +1,10 @@
 import { SessionTokens } from "./adapter";
 
 
-export type TokenManagerParams = { secret: string }
+export type TokenManagerOptions = {
+    alg?: string,
+    secret: string,
+}
 export interface TokenManager {
     generate(at: any): Promise<Pick<Required<SessionTokens>, 'accessToken' | 'accessTokenExpires'>>,
     generate(at: any, rt: any): Promise<Required<SessionTokens>>,
