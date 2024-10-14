@@ -18,7 +18,7 @@ class JoseAdapter<T extends {}> implements TokenAdapter<T> {
     return new SignJWT(payload)
       .setIssuedAt()
       .setProtectedHeader({ alg })
-      .setExpirationTime(expiresIn)
+      .setExpirationTime(Date.now() + expiresIn)
       .sign(secret);
   }
   
