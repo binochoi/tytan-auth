@@ -1,4 +1,4 @@
-import { SessionTokens, StrategyCore } from "@tytan-auth/common";
+import { SessionTokens } from "@tytan-auth/common";
 import { ProviderWrap } from '@tytan-auth/provider'
 
 export interface OauthEndpoints<TProviderKey extends string, TSession extends object = any> {
@@ -8,7 +8,7 @@ export interface OauthEndpoints<TProviderKey extends string, TSession extends ob
             codeVerifier?: string,
             state?: {
                 [K: string]: any,
-            } 
+            }
         },
     ) => Promise<URL>,
     validateAndSign: (params: {

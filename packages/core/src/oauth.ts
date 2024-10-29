@@ -55,3 +55,4 @@ const strategy = <TProviderKey extends string, TSession extends object>({
     }
 }
 export default strategy;
+export * from './types/oauth.type'

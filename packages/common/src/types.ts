@@ -2,14 +2,19 @@ import { SetRequired } from 'type-fest';
 import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
 import { TokenAdapter, TokenManager } from './types/token';
 import { DefaultSession, DefaultUser } from './types/schema';
-export type TytanAuthParams = {
-    config?: TytanAuthConfigInput,
-    token: TokenAdapter<any>,
-    strategies: StrategyCore[],
-    adapters: {
+export type TytanAuthParams<
+    TConfig extends TytanAuthConfigInput,
+    TStrategies extends StrategyCore[],
+    TAdapters extends {
         user: UserAdapter,
         session: SessionAdapter,
     },
+    TTokenAdapter extends TokenAdapter<any>
+> = {
+    config?: TConfig,
+    token: TTokenAdapter,
+    strategies: TStrategies,
+    adapters: TAdapters,
     plugins?: any[],
 }
 export type TytanAuthConfigInput = {
