@@ -49,10 +49,7 @@ export const getAuthService = ({
             }
         },
         async verifyOrRefresh(accessToken?: string, refreshToken?: string) {
-            try {
-                await tokenManager.validate(accessToken || '');
-                return { status: 'healthy' as const }
-            } catch(e) {}
+            await tokenManager.validate(accessToken || '');
             // refreshTokenRenewalPeriod 추가 예정 (rt 만료 다가올 시 rt까지 refresh 이후 session도 변경)
             try {
                 const { userId: id } = await tokenManager.validate(refreshToken || '');

@@ -80,8 +80,6 @@ export type AuthService<
     signup: (user: TUser) => Promise<SignResult<TUser, TSession>>,
     signin: (user: TUser) => Promise<SignResult<TUser, TSession>>,
     verifyOrRefresh: (accessToken?: string, refreshToken?: string) => Promise<
-        /** at 건재함 */
-        Record<'status', 'healthy'> |
         /** at, rt 만료되거나 없음 */
         Record<'status', 'expired'> |
         /** at가 이상하거나 rt가 이상함 */
