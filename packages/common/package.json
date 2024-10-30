@@ -10,13 +10,16 @@
   ],
   "license": "MIT",
   "scripts": {
-    "dev": "pkgroll --sourcemap=inline --watch",
+    "dev": "chokidar \"src/**/*.ts\" -c \"pnpm dev.build\" --initial",
+    "dev.build": "pkgroll --clean-dist --sourcemap=inline && npx pkg-to-dist",
     "build": "pkgroll --clean-dist --minify"
   },
   "devDependencies": {
     "@binochoi/eslint-config-typescript": "^0.0.25",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^6.21.0",
+    "chokidar": "^4.0.1",
+    "chokidar-cli": "^3.0.0",
     "eslint": "^9.0.0",
     "npm-run-all": "^4.1.5"
   },
@@ -24,13 +27,25 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "exports": {
-    "require": {
-      "types": "./dist/index.d.cts",
-      "default": "./dist/index.cjs"
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     },
-    "import": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
+    "./implement": {
+      "require": {
+        "types": "./dist/implement.d.ts",
+        "default": "./dist/implement.cjs"
+      },
+      "import": {
+        "types": "./dist/implement.d.ts",
+        "default": "./dist/implement.mjs"
+      }
     }
   },
   "keywords": [],

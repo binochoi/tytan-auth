@@ -47,7 +47,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "@tytan-auth/common": "../common",
+    "@tytan-auth/common": "../common/dist",
     "arctic": "^1.9.2",
     "next-auth": "^4.24.7",
     "pkgroll": "^2.4.2",

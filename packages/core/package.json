@@ -62,7 +62,7 @@
   "keywords": [],
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.6",
-    "@tytan-auth/common": "../common",
+    "@tytan-auth/common": "../common/dist",
     "@tytan-auth/provider": "../provider",
     "arctic": "^1.9.2",
     "jose": "^5.9.4",

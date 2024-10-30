@@ -35,7 +35,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "@tytan-auth/common": "../common",
+    "@tytan-auth/common": "../common/dist",
     "drizzle-orm": "0.31.2",
     "drizzle-repository-generator": "^0.0.14",
     "oslo": "^1.2.1",
