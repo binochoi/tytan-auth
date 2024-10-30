@@ -41,9 +41,7 @@ const Tytan = <
             return [name, endpoints];
         })
     type Strategy = ReturnType<TStrategies[number]>;
-    const types = {} as {
-        types: Strategy['types'] & TAdapters['user']['types'] & TAdapters['session']['types']
-    }
+    const types = {} as Strategy['types'] & TAdapters['user']['types'] & TAdapters['session']['types']
     type Endpoints = {
         [K in Strategy['name']]: Strategy['endpoints']
     }
