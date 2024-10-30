@@ -1,4 +1,3 @@
-import { SetRequired } from 'type-fest';
 import type { UserAdapter, SessionAdapter, SessionTokens } from './types/adapter';
 import { TokenAdapter, TokenManager } from './types/token';
 import { DefaultSession, DefaultUser } from './types/schema';
