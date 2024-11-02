@@ -16,6 +16,19 @@ export type TytanAuthParams<
     adapters: TAdapters,
     plugins?: any[],
 }
+export type TytanAuthResults<
+    TEndpoints extends {
+        [K: string]: any,
+    },
+    TTypes extends object,
+    TUserAdapter extends UserAdapter = UserAdapter,
+    TSessionAdapter extends SessionAdapter = SessionAdapter
+> = TEndpoints & TTypes & AuthService<any, any> & {
+    tokenManager: TokenManager,
+    types: TTypes,
+    user: TUserAdapter,
+    session: TSessionAdapter,
+};
 export type TytanAuthConfigInput = {
     /** @default false */
     // allowDuplicateEmail?: boolean,
@@ -96,4 +109,9 @@ export type AuthService<
             tokens: SessionTokens,
         }>
     logout: (refreshToken: string) => Promise<TSession>
+}
+export type Endpoint<T extends (...args: any[]) => any> = {
+    path: string,
+    method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
+    handler: T,
 }
