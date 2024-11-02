@@ -1,22 +1,24 @@
 import { AuthService, SessionAdapter, StrategyCore, TokenAdapter, TytanAuthConfigInput, TytanAuthConfigOutput, UserAdapter } from "@tytan-auth/common";
 import TokenManager from "./services/TokenManager";
-import { TytanAuthParams } from "@tytan-auth/common";
+import { TytanAuthParams, TytanAuthResults } from "@tytan-auth/common";
 import { getAuthService } from "./services/AuthService";
 
 const Tytan = <
     TConfig extends TytanAuthConfigInput,
     TStrategies extends StrategyCore[],
-    TAdapters extends {
-        user: UserAdapter,
-        session: SessionAdapter,
-    },
-    TTokenAdapter extends TokenAdapter<any>
+    TUserAdapter extends UserAdapter,
+    TSessionAdapter extends SessionAdapter,
+    TTokenAdapter extends TokenAdapter<any>,
+    TStrategy extends ReturnType<TStrategies[number]>,
+    TEndpoints extends {
+        [K in TStrategy['name']]: TStrategy['endpoints']
+    }
 >({
-    token: tokenManager,
+    token: tokenAdapter,
     strategies,
     adapters,
     config: configInput,
-}: TytanAuthParams<TConfig, TStrategies, TAdapters, TTokenAdapter>) => {
+}: TytanAuthParams<TConfig, TStrategies, { user: TUserAdapter, session: TSessionAdapter }, TTokenAdapter>): TytanAuthResults<TEndpoints, typeof types, TUserAdapter, TSessionAdapter> => {
     const { user, session } = adapters;
     const config: TytanAuthConfigOutput = {
         accessTokenExpires: /* @default 2min */ 60 * 2,
@@ -33,26 +35,22 @@ const Tytan = <
         }),
         ...configInput,
     }
-    const token = new TokenManager(tokenManager, config);
+    const token = new TokenManager(tokenAdapter, config);
     const authService = getAuthService({ token, config, ...adapters });
     const strategyCores = strategies
         .map((createStrategy) => {
             const { name, endpoints } = createStrategy({ token, ...adapters, auth: authService, types: {} as any });
             return [name, endpoints];
         })
-    type Strategy = ReturnType<TStrategies[number]>;
-    const types = {} as Strategy['types'] & TAdapters['user']['types'] & TAdapters['session']['types']
-    type Endpoints = {
-        [K in Strategy['name']]: Strategy['endpoints']
-    }
+    const types = {} as TStrategy['types'] & TUserAdapter['types'] & TSessionAdapter['types']
     return {
-        ...(Object.fromEntries(strategyCores) as Endpoints),
+        ...(Object.fromEntries(strategyCores) as TEndpoints),
         ...(authService as AuthService<any, any>),
         user,
         session,
-        tokenManager,
+        tokenManager: token,
         types,
-    }
+    };
 }
 
 export default Tytan;
