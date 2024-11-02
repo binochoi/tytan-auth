@@ -8,7 +8,7 @@ import { DefaultUser as User, DefaultSession as Session, TokenManager as ITokenM
  * - 이후 사이트를 왔다갔다 할 경우 쿠키가 있으면 validation을 하는데,
  * - validation failed 뜰 경우 RT, AT 모두 변경함.
  */
-export default class TokenManager<T extends object> implements ITokenManager {
+export default class TokenManager implements ITokenManager {
     constructor(
         private readonly token: TokenAdapter<any>,
         private readonly config: TytanAuthConfigOutput
